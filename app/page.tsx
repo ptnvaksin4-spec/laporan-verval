@@ -46,12 +46,8 @@ export default function Home() {
 
         <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6 mb-5">
           <h1 className="text-2xl md:text-4xl font-bold text-black">
-            Rekap Verifikasi & Aktivasi
+            Pra SMPB SMKN 1 Cipanas
           </h1>
-
-          <p className="text-gray-800 text-sm md:text-base mt-2">
-            Data laporan verval siswa
-          </p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-md p-4 mb-5">
@@ -72,22 +68,27 @@ export default function Home() {
               className="bg-white rounded-2xl shadow-md border border-gray-300 p-4"
             >
 
-              {Object.entries(item).map(([key, value], i) => (
-                <div
-                  key={i}
-                  className="py-3 border-b border-gray-200 last:border-b-0"
-                >
+              {Object.entries(item)
+                .filter(
+                  ([key]) =>
+                    !key.toLowerCase().includes("waktu")
+                )
+                .map(([key, value], i) => (
+                  <div
+                    key={i}
+                    className="py-3 border-b border-gray-200 last:border-b-0"
+                  >
 
-                  <div className="text-xs uppercase font-semibold text-gray-700 mb-1">
-                    {key}
+                    <div className="text-xs uppercase font-semibold text-gray-700 mb-1">
+                      {key}
+                    </div>
+
+                    <div className="text-sm md:text-base text-black font-medium break-words">
+                      {String(value)}
+                    </div>
+
                   </div>
-
-                  <div className="text-sm md:text-base text-black font-medium break-words">
-                    {String(value)}
-                  </div>
-
-                </div>
-              ))}
+                ))}
 
             </div>
           ))}
