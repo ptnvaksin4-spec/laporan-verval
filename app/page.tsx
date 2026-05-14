@@ -66,7 +66,7 @@ export default function Home() {
       .join(" ")
       .toLowerCase();
 
-    return text.includes("sudah aktivasi");
+    return text.includes("sudah");
   }).length;
 
   return (
