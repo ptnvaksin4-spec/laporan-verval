@@ -33,48 +33,56 @@ export default function Home() {
   }, []);
 
   const filteredData = useMemo(() => {
-    let temp = data;
+    let temp = [...data];
 
     if (view === "aktivasi") {
-      temp = temp.filter((item) =>
-        Object.values(item)
-          .join(" ")
-          .toLowerCase()
-          .includes("sudah aktivasi")
-      );
+      temp = temp.filter((item) => {
+        const text = JSON.stringify(item).toLowerCase();
+
+        return (
+          text.includes("aktivasi") ||
+          text.includes("aktif")
+        );
+      });
     }
 
     if (view === "belumaktivasi") {
-      temp = temp.filter((item) =>
-        Object.values(item)
-          .join(" ")
-          .toLowerCase()
-          .includes("belum aktivasi")
-      );
+      temp = temp.filter((item) => {
+        const text = JSON.stringify(item).toLowerCase();
+
+        return (
+          text.includes("belum aktivasi") ||
+          text.includes("belum aktif") ||
+          text.includes("pending")
+        );
+      });
     }
 
     if (view === "sudahrevisi") {
-      temp = temp.filter((item) =>
-        Object.values(item)
-          .join(" ")
-          .toLowerCase()
-          .includes("sudah mengajukan revisi")
-      );
+      temp = temp.filter((item) => {
+        const text = JSON.stringify(item).toLowerCase();
+
+        return (
+          text.includes("revisi") ||
+          text.includes("mengajukan")
+        );
+      });
     }
 
     if (view === "belumrevisi") {
-      temp = temp.filter((item) =>
-        Object.values(item)
-          .join(" ")
-          .toLowerCase()
-          .includes("belum mengajukan revisi")
-      );
+      temp = temp.filter((item) => {
+        const text = JSON.stringify(item).toLowerCase();
+
+        return (
+          text.includes("belum revisi") ||
+          text.includes("belum mengajukan")
+        );
+      });
     }
 
     if (search) {
       temp = temp.filter((item) =>
-        Object.values(item)
-          .join(" ")
+        JSON.stringify(item)
           .toLowerCase()
           .includes(search.toLowerCase())
       );
@@ -86,7 +94,8 @@ export default function Home() {
   const headers =
     data.length > 0
       ? Object.keys(data[0]).filter(
-          (key) => !key.toLowerCase().includes("waktu")
+          (key) =>
+            !key.toLowerCase().includes("waktu")
         )
       : [];
 
@@ -124,7 +133,7 @@ export default function Home() {
 
             <button
               onClick={() => setView("nama")}
-              className={`p-3 rounded-2xl font-bold text-sm md:text-base transition-all ${
+              className={`p-3 rounded-2xl font-bold text-sm md:text-base ${
                 view === "nama"
                   ? "bg-blue-700 text-white"
                   : "bg-slate-300 text-black"
@@ -135,7 +144,7 @@ export default function Home() {
 
             <button
               onClick={() => setView("aktivasi")}
-              className={`p-3 rounded-2xl font-bold text-sm md:text-base transition-all ${
+              className={`p-3 rounded-2xl font-bold text-sm md:text-base ${
                 view === "aktivasi"
                   ? "bg-blue-700 text-white"
                   : "bg-slate-300 text-black"
@@ -146,7 +155,7 @@ export default function Home() {
 
             <button
               onClick={() => setView("belumaktivasi")}
-              className={`p-3 rounded-2xl font-bold text-sm md:text-base transition-all ${
+              className={`p-3 rounded-2xl font-bold text-sm md:text-base ${
                 view === "belumaktivasi"
                   ? "bg-red-700 text-white"
                   : "bg-slate-300 text-black"
@@ -157,7 +166,7 @@ export default function Home() {
 
             <button
               onClick={() => setView("sudahrevisi")}
-              className={`p-3 rounded-2xl font-bold text-sm md:text-base transition-all ${
+              className={`p-3 rounded-2xl font-bold text-sm md:text-base ${
                 view === "sudahrevisi"
                   ? "bg-green-700 text-white"
                   : "bg-slate-300 text-black"
@@ -168,7 +177,7 @@ export default function Home() {
 
             <button
               onClick={() => setView("belumrevisi")}
-              className={`p-3 rounded-2xl font-bold text-sm md:text-base transition-all ${
+              className={`p-3 rounded-2xl font-bold text-sm md:text-base ${
                 view === "belumrevisi"
                   ? "bg-yellow-500 text-black"
                   : "bg-slate-300 text-black"
