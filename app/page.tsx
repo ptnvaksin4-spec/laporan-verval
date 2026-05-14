@@ -31,15 +31,15 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-gray-100 p-3 md:p-6">
+    <main className="min-h-screen bg-gray-200 p-3 md:p-6">
       <div className="max-w-5xl mx-auto">
 
-        <div className="bg-white rounded-2xl shadow-md p-4 md:p-6 mb-5">
-          <h1 className="text-xl md:text-3xl font-bold">
+        <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6 mb-5">
+          <h1 className="text-2xl md:text-4xl font-bold text-black">
             Rekap Verifikasi & Aktivasi
           </h1>
 
-          <p className="text-gray-500 text-sm mt-2">
+          <p className="text-gray-800 text-sm md:text-base mt-2">
             Data laporan verval siswa
           </p>
         </div>
@@ -49,20 +49,20 @@ export default function Home() {
           {data.map((item, index) => (
             <div
               key={index}
-              className="bg-white rounded-2xl shadow-sm border p-4"
+              className="bg-white rounded-2xl shadow-md border border-gray-300 p-4"
             >
 
               {Object.entries(item).map(([key, value], i) => (
                 <div
                   key={i}
-                  className="py-2 border-b last:border-b-0"
+                  className="py-3 border-b border-gray-200 last:border-b-0"
                 >
 
-                  <div className="text-xs uppercase text-gray-500 mb-1">
+                  <div className="text-xs uppercase font-semibold text-gray-700 mb-1">
                     {key}
                   </div>
 
-                  <div className="text-sm md:text-base font-medium break-words">
+                  <div className="text-sm md:text-base text-black font-medium break-words">
                     {String(value)}
                   </div>
 
