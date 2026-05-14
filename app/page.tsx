@@ -42,6 +42,20 @@ export default function Home() {
     });
   }, [data, search]);
 
+  const totalMengajukan = filteredData.filter((item) =>
+    Object.values(item)
+      .join(" ")
+      .toLowerCase()
+      .includes("mengajukan revisi")
+  ).length;
+
+  const totalBelumMengajukan = filteredData.filter((item) =>
+    Object.values(item)
+      .join(" ")
+      .toLowerCase()
+      .includes("belum mengajukan revisi")
+  ).length;
+
   return (
     <main className="min-h-screen bg-slate-100">
       <div className="max-w-7xl mx-auto p-3 md:p-6">
@@ -60,6 +74,14 @@ export default function Home() {
 
             <div className="bg-white/20 backdrop-blur px-4 py-2 rounded-2xl text-sm">
               Total Data: {filteredData.length}
+            </div>
+
+            <div className="bg-green-500/30 backdrop-blur px-4 py-2 rounded-2xl text-sm">
+              Mengajukan Revisi: {totalMengajukan}
+            </div>
+
+            <div className="bg-red-500/30 backdrop-blur px-4 py-2 rounded-2xl text-sm">
+              Belum Mengajukan: {totalBelumMengajukan}
             </div>
 
           </div>
