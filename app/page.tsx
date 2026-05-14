@@ -42,19 +42,24 @@ export default function Home() {
     });
   }, [data, search]);
 
-  const totalMengajukan = filteredData.filter((item) =>
-    Object.values(item)
+  const totalMengajukan = filteredData.filter((item) => {
+    const text = Object.values(item)
       .join(" ")
-      .toLowerCase()
-      .includes("mengajukan revisi")
-  ).length;
+      .toLowerCase();
 
-  const totalBelumMengajukan = filteredData.filter((item) =>
-    Object.values(item)
+    return (
+      text.includes("mengajukan revisi") &&
+      !text.includes("belum mengajukan revisi")
+    );
+  }).length;
+
+  const totalBelumMengajukan = filteredData.filter((item) => {
+    const text = Object.values(item)
       .join(" ")
-      .toLowerCase()
-      .includes("belum mengajukan revisi")
-  ).length;
+      .toLowerCase();
+
+    return text.includes("belum mengajukan revisi");
+  }).length;
 
   return (
     <main className="min-h-screen bg-slate-100">
