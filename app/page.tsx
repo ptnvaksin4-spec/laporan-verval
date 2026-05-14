@@ -36,7 +36,7 @@ export default function Home() {
 
         <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6 mb-5">
           <h1 className="text-2xl md:text-4xl font-bold text-black">
-            Rekap Verifikasi & Aktivasi
+            Rekap Pra SPMB SMKN 1 Cipanas
           </h1>
 
           <p className="text-gray-800 text-sm md:text-base mt-2">
