@@ -61,6 +61,14 @@ export default function Home() {
     return text.includes("belum mengajukan revisi");
   }).length;
 
+  const totalSudahAktivasi = filteredData.filter((item) => {
+    const text = Object.values(item)
+      .join(" ")
+      .toLowerCase();
+
+    return text.includes("sudah aktivasi");
+  }).length;
+
   return (
     <main className="min-h-screen bg-slate-100">
       <div className="max-w-7xl mx-auto p-3 md:p-6">
@@ -87,6 +95,10 @@ export default function Home() {
 
             <div className="bg-red-500/30 backdrop-blur px-4 py-2 rounded-2xl text-sm">
               Belum Mengajukan: {totalBelumMengajukan}
+            </div>
+
+            <div className="bg-cyan-500/30 backdrop-blur px-4 py-2 rounded-2xl text-sm">
+              Sudah Aktivasi: {totalSudahAktivasi}
             </div>
 
           </div>
