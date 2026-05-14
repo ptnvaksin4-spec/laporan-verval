@@ -35,6 +35,15 @@ export default function Home() {
   const filteredData = useMemo(() => {
     let temp = data;
 
+    if (view === "aktivasi") {
+      temp = temp.filter((item) =>
+        Object.values(item)
+          .join(" ")
+          .toLowerCase()
+          .includes("sudah aktivasi")
+      );
+    }
+
     if (view === "belumaktivasi") {
       temp = temp.filter((item) =>
         Object.values(item)
@@ -49,7 +58,7 @@ export default function Home() {
         Object.values(item)
           .join(" ")
           .toLowerCase()
-          .includes("sudah revisi")
+          .includes("sudah mengajukan revisi")
       );
     }
 
@@ -58,7 +67,7 @@ export default function Home() {
         Object.values(item)
           .join(" ")
           .toLowerCase()
-          .includes("belum revisi")
+          .includes("belum mengajukan revisi")
       );
     }
 
@@ -139,7 +148,7 @@ export default function Home() {
               onClick={() => setView("belumaktivasi")}
               className={`p-3 rounded-2xl font-bold text-sm md:text-base transition-all ${
                 view === "belumaktivasi"
-                  ? "bg-blue-700 text-white"
+                  ? "bg-red-700 text-white"
                   : "bg-slate-300 text-black"
               }`}
             >
@@ -150,7 +159,7 @@ export default function Home() {
               onClick={() => setView("sudahrevisi")}
               className={`p-3 rounded-2xl font-bold text-sm md:text-base transition-all ${
                 view === "sudahrevisi"
-                  ? "bg-blue-700 text-white"
+                  ? "bg-green-700 text-white"
                   : "bg-slate-300 text-black"
               }`}
             >
@@ -161,7 +170,7 @@ export default function Home() {
               onClick={() => setView("belumrevisi")}
               className={`p-3 rounded-2xl font-bold text-sm md:text-base transition-all ${
                 view === "belumrevisi"
-                  ? "bg-blue-700 text-white"
+                  ? "bg-yellow-500 text-black"
                   : "bg-slate-300 text-black"
               }`}
             >
