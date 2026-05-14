@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 export default function Home() {
   const [data, setData] = useState<any[]>([]);
   const [search, setSearch] = useState("");
-  const [view, setView] = useState("card");
+  const [view, setView] = useState("nama");
 
   useEffect(() => {
     fetch("/laporan.csv")
@@ -33,15 +33,46 @@ export default function Home() {
   }, []);
 
   const filteredData = useMemo(() => {
-    return data.filter((item) => {
-      if (!search) return true;
+    let temp = data;
 
-      return Object.values(item)
-        .join(" ")
-        .toLowerCase()
-        .includes(search.toLowerCase());
-    });
-  }, [data, search]);
+    if (view === "belumaktivasi") {
+      temp = temp.filter((item) =>
+        Object.values(item)
+          .join(" ")
+          .toLowerCase()
+          .includes("belum aktivasi")
+      );
+    }
+
+    if (view === "sudahrevisi") {
+      temp = temp.filter((item) =>
+        Object.values(item)
+          .join(" ")
+          .toLowerCase()
+          .includes("sudah revisi")
+      );
+    }
+
+    if (view === "belumrevisi") {
+      temp = temp.filter((item) =>
+        Object.values(item)
+          .join(" ")
+          .toLowerCase()
+          .includes("belum revisi")
+      );
+    }
+
+    if (search) {
+      temp = temp.filter((item) =>
+        Object.values(item)
+          .join(" ")
+          .toLowerCase()
+          .includes(search.toLowerCase())
+      );
+    }
+
+    return temp;
+  }, [data, search, view]);
 
   const headers =
     data.length > 0
@@ -80,35 +111,68 @@ export default function Home() {
             className="w-full border-2 border-slate-400 rounded-2xl p-4 text-black text-sm md:text-base outline-none mb-4"
           />
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
 
             <button
-              onClick={() => setView("card")}
+              onClick={() => setView("nama")}
               className={`p-3 rounded-2xl font-bold text-sm md:text-base transition-all ${
-                view === "card"
+                view === "nama"
                   ? "bg-blue-700 text-white"
                   : "bg-slate-300 text-black"
               }`}
             >
-              Tampilan Card
+              Nama
             </button>
 
             <button
-              onClick={() => setView("table")}
+              onClick={() => setView("aktivasi")}
               className={`p-3 rounded-2xl font-bold text-sm md:text-base transition-all ${
-                view === "table"
+                view === "aktivasi"
                   ? "bg-blue-700 text-white"
                   : "bg-slate-300 text-black"
               }`}
             >
-              Tampilan Tabel
+              Aktivasi
+            </button>
+
+            <button
+              onClick={() => setView("belumaktivasi")}
+              className={`p-3 rounded-2xl font-bold text-sm md:text-base transition-all ${
+                view === "belumaktivasi"
+                  ? "bg-blue-700 text-white"
+                  : "bg-slate-300 text-black"
+              }`}
+            >
+              Belum Aktivasi
+            </button>
+
+            <button
+              onClick={() => setView("sudahrevisi")}
+              className={`p-3 rounded-2xl font-bold text-sm md:text-base transition-all ${
+                view === "sudahrevisi"
+                  ? "bg-blue-700 text-white"
+                  : "bg-slate-300 text-black"
+              }`}
+            >
+              Sudah Revisi
+            </button>
+
+            <button
+              onClick={() => setView("belumrevisi")}
+              className={`p-3 rounded-2xl font-bold text-sm md:text-base transition-all ${
+                view === "belumrevisi"
+                  ? "bg-blue-700 text-white"
+                  : "bg-slate-300 text-black"
+              }`}
+            >
+              Belum Revisi
             </button>
 
           </div>
 
         </div>
 
-        {view === "card" && (
+        {view === "nama" && (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
 
             {filteredData.map((item, index) => (
@@ -157,7 +221,10 @@ export default function Home() {
           </div>
         )}
 
-        {view === "table" && (
+        {(view === "aktivasi" ||
+          view === "belumaktivasi" ||
+          view === "sudahrevisi" ||
+          view === "belumrevisi") && (
           <div className="bg-white rounded-3xl shadow-lg border-2 border-slate-300 overflow-hidden">
 
             <div className="overflow-x-auto">
