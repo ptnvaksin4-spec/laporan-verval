@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const [data, setData] = useState<any[]>([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     fetch("/laporan.csv")
@@ -30,13 +31,22 @@ export default function Home() {
       });
   }, []);
 
+  const filteredData = data.filter((item) => {
+    if (!search) return true;
+
+    return Object.values(item)
+      .join(" ")
+      .toLowerCase()
+      .includes(search.toLowerCase());
+  });
+
   return (
     <main className="min-h-screen bg-gray-200 p-3 md:p-6">
       <div className="max-w-5xl mx-auto">
 
         <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6 mb-5">
           <h1 className="text-2xl md:text-4xl font-bold text-black">
-            Rekap Pra SPMB SMKN 1 Cipanas
+            Rekap Verifikasi & Aktivasi
           </h1>
 
           <p className="text-gray-800 text-sm md:text-base mt-2">
@@ -44,9 +54,19 @@ export default function Home() {
           </p>
         </div>
 
+        <div className="bg-white rounded-2xl shadow-md p-4 mb-5">
+          <input
+            type="text"
+            placeholder="Cari berdasarkan NISN atau Nama"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full border border-gray-300 rounded-xl p-3 text-black outline-none"
+          />
+        </div>
+
         <div className="grid gap-4">
 
-          {data.map((item, index) => (
+          {filteredData.map((item, index) => (
             <div
               key={index}
               className="bg-white rounded-2xl shadow-md border border-gray-300 p-4"
