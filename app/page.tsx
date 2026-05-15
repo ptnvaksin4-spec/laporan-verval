@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 export default function Home() {
   const [data, setData] = useState<any[]>([]);
   const [search, setSearch] = useState("");
+  const [menu, setMenu] = useState("dashboard");
 
   useEffect(() => {
     fetch("/laporan.csv")
@@ -41,6 +42,53 @@ export default function Home() {
         .includes(search.toLowerCase());
     });
   }, [data, search]);
+
+  const rekapSekolah = useMemo(() => {
+    const result: any = {};
+
+    filteredData.forEach((item) => {
+      const sekolah =
+        item["Sekolah"] ||
+        item["Asal Sekolah"] ||
+        "Tidak Diketahui";
+
+      const jk =
+        item["Jenis Kelamin"] ||
+        item["JK"] ||
+        "";
+
+      if (!result[sekolah]) {
+        result[sekolah] = {
+          laki: 0,
+          perempuan: 0,
+          total: 0,
+        };
+      }
+
+      if (
+        jk.toLowerCase() === "l" ||
+        jk.toLowerCase().includes("laki")
+      ) {
+        result[sekolah].laki += 1;
+      }
+
+      if (
+        jk.toLowerCase() === "p" ||
+        jk.toLowerCase().includes("perempuan")
+      ) {
+        result[sekolah].perempuan += 1;
+      }
+
+      result[sekolah].total += 1;
+    });
+
+    return Object.entries(result)
+      .map(([nama, value]: any) => ({
+        nama,
+        ...value,
+      }))
+      .sort((a, b) => b.total - a.total);
+  }, [filteredData]);
 
   return (
     <main className="min-h-screen bg-slate-100">
@@ -145,6 +193,33 @@ export default function Home() {
 
         </div>
 
+        {/* MENU */}
+        <div className="flex gap-3 mb-8 overflow-auto">
+
+          <button
+            onClick={() => setMenu("dashboard")}
+            className={`px-5 py-3 rounded-2xl text-sm font-semibold transition-all ${
+              menu === "dashboard"
+                ? "bg-blue-600 text-white"
+                : "bg-white text-slate-700 border border-slate-200"
+            }`}
+          >
+            Dashboard
+          </button>
+
+          <button
+            onClick={() => setMenu("sekolah")}
+            className={`px-5 py-3 rounded-2xl text-sm font-semibold transition-all ${
+              menu === "sekolah"
+                ? "bg-blue-600 text-white"
+                : "bg-white text-slate-700 border border-slate-200"
+            }`}
+          >
+            Rekap Sekolah
+          </button>
+
+        </div>
+
         {/* SEARCH */}
         <div className="bg-white rounded-[28px] shadow-xl border border-slate-200 p-4 md:p-6 mb-8">
 
@@ -166,63 +241,137 @@ export default function Home() {
 
         </div>
 
-        {/* CARD DATA */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {/* DASHBOARD */}
+        {menu === "dashboard" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-          {filteredData.map((item, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-[28px] border border-slate-200 shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden"
-            >
+            {filteredData.map((item, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-[28px] border border-slate-200 shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden"
+              >
 
-              <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-5 py-4 border-b border-slate-200 flex items-center justify-between">
+                <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-5 py-4 border-b border-slate-200 flex items-center justify-between">
 
-                <div>
-                  <div className="text-sm font-bold text-blue-700">
-                    Data Peserta
+                  <div>
+                    <div className="text-sm font-bold text-blue-700">
+                      Data Peserta
+                    </div>
+
+                    <div className="text-xs text-slate-500 mt-1">
+                      Detail Verifikasi
+                    </div>
                   </div>
 
-                  <div className="text-xs text-slate-500 mt-1">
-                    Detail Verifikasi
+                  <div className="bg-blue-600 text-white text-xs px-3 py-1 rounded-full">
+                    #{index + 1}
                   </div>
+
                 </div>
 
-                <div className="bg-blue-600 text-white text-xs px-3 py-1 rounded-full">
-                  #{index + 1}
+                <div className="p-5">
+
+                  {Object.entries(item)
+                    .filter(
+                      ([key]) =>
+                        !key.toLowerCase().includes("waktu")
+                    )
+                    .map(([key, value], i) => (
+                      <div
+                        key={i}
+                        className="py-3 border-b border-slate-100 last:border-b-0"
+                      >
+
+                        <div className="text-[11px] uppercase tracking-wider font-bold text-slate-400 mb-1">
+                          {key}
+                        </div>
+
+                        <div className="text-sm md:text-base text-slate-800 font-semibold break-words">
+                          {String(value)}
+                        </div>
+
+                      </div>
+                    ))}
+
                 </div>
 
               </div>
+            ))}
 
-              <div className="p-5">
+          </div>
+        )}
 
-                {Object.entries(item)
-                  .filter(
-                    ([key]) =>
-                      !key.toLowerCase().includes("waktu")
-                  )
-                  .map(([key, value], i) => (
-                    <div
-                      key={i}
-                      className="py-3 border-b border-slate-100 last:border-b-0"
+        {/* REKAP SEKOLAH */}
+        {menu === "sekolah" && (
+          <div className="bg-white rounded-[28px] border border-slate-200 shadow-xl overflow-hidden">
+
+            <div className="overflow-auto">
+
+              <table className="w-full min-w-[700px]">
+
+                <thead className="bg-slate-100">
+                  <tr>
+
+                    <th className="text-left px-6 py-4 text-sm font-bold text-slate-700">
+                      No
+                    </th>
+
+                    <th className="text-left px-6 py-4 text-sm font-bold text-slate-700">
+                      Sekolah
+                    </th>
+
+                    <th className="text-center px-6 py-4 text-sm font-bold text-slate-700">
+                      Laki-Laki
+                    </th>
+
+                    <th className="text-center px-6 py-4 text-sm font-bold text-slate-700">
+                      Perempuan
+                    </th>
+
+                    <th className="text-center px-6 py-4 text-sm font-bold text-slate-700">
+                      Total
+                    </th>
+
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {rekapSekolah.map((item, index) => (
+                    <tr
+                      key={index}
+                      className="border-t border-slate-100 hover:bg-slate-50"
                     >
 
-                      <div className="text-[11px] uppercase tracking-wider font-bold text-slate-400 mb-1">
-                        {key}
-                      </div>
+                      <td className="px-6 py-4 text-sm text-slate-700">
+                        {index + 1}
+                      </td>
 
-                      <div className="text-sm md:text-base text-slate-800 font-semibold break-words">
-                        {String(value)}
-                      </div>
+                      <td className="px-6 py-4 text-sm font-semibold text-slate-800">
+                        {item.nama}
+                      </td>
 
-                    </div>
+                      <td className="px-6 py-4 text-center text-sm text-blue-700 font-bold">
+                        {item.laki}
+                      </td>
+
+                      <td className="px-6 py-4 text-center text-sm text-pink-700 font-bold">
+                        {item.perempuan}
+                      </td>
+
+                      <td className="px-6 py-4 text-center text-sm font-bold text-slate-900">
+                        {item.total}
+                      </td>
+
+                    </tr>
                   ))}
+                </tbody>
 
-              </div>
+              </table>
 
             </div>
-          ))}
 
-        </div>
+          </div>
+        )}
 
       </div>
 
