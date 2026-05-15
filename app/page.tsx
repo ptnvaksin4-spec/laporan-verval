@@ -43,13 +43,16 @@ export default function Home() {
     });
   }, [data, search]);
 
+  // REKAP SEKOLAH
   const rekapSekolah = useMemo(() => {
     const result: any = {};
 
     filteredData.forEach((item) => {
+
       const sekolah =
-        item["Sekolah"] ||
         item["Asal Sekolah"] ||
+        item["Sekolah Asal"] ||
+        item["Sekolah"] ||
         "Tidak Diketahui";
 
       const jk =
@@ -65,16 +68,21 @@ export default function Home() {
         };
       }
 
+      const jenisKelamin = jk.toLowerCase().trim();
+
+      // LAKI-LAKI
       if (
-        jk.toLowerCase() === "l" ||
-        jk.toLowerCase().includes("laki")
+        jenisKelamin === "l" ||
+        jenisKelamin === "laki-laki" ||
+        jenisKelamin === "lakilaki"
       ) {
         result[sekolah].laki += 1;
       }
 
+      // PEREMPUAN
       if (
-        jk.toLowerCase() === "p" ||
-        jk.toLowerCase().includes("perempuan")
+        jenisKelamin === "p" ||
+        jenisKelamin === "perempuan"
       ) {
         result[sekolah].perempuan += 1;
       }
@@ -88,6 +96,7 @@ export default function Home() {
         ...value,
       }))
       .sort((a, b) => b.total - a.total);
+
   }, [filteredData]);
 
   return (
