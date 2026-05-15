@@ -11,6 +11,7 @@ export default function Home() {
     fetch("/laporan.csv")
       .then((res) => res.text())
       .then((text) => {
+
         const rows = text
           .trim()
           .split("\n")
@@ -30,47 +31,62 @@ export default function Home() {
 
         setData(result);
       });
+
   }, []);
 
-  // FILTER SEARCH
+  // FILTER DATA
   const filteredData = useMemo(() => {
+
     return data.filter((item) => {
+
       if (!search) return true;
 
       return Object.values(item)
         .join(" ")
         .toLowerCase()
         .includes(search.toLowerCase());
+
     });
+
   }, [data, search]);
 
   // REKAP SEKOLAH
   const rekapSekolah = useMemo(() => {
+
     const sekolahMap = new Map();
 
     filteredData.forEach((item) => {
 
-      const namaSekolah =
-        item["Asal Sekolah"] ||
-        item["Sekolah Asal"] ||
-        item["Sekolah"] ||
-        "-";
+      // CARI KOLOM SEKOLAH OTOMATIS
+      const sekolahKey = Object.keys(item).find((key) =>
+        key.toLowerCase().includes("sekolah")
+      );
 
-      const jenisKelamin = (
-        item["Jenis Kelamin"] ||
-        item["JK"] ||
-        ""
-      )
-        .toLowerCase()
-        .trim();
+      const namaSekolah = sekolahKey
+        ? item[sekolahKey]
+        : "Tidak Diketahui";
 
+      // CARI KOLOM JK OTOMATIS
+      const jkKey = Object.keys(item).find(
+        (key) =>
+          key.toLowerCase().includes("jenis kelamin") ||
+          key.toLowerCase() === "jk"
+      );
+
+      const jenisKelamin = jkKey
+        ? String(item[jkKey]).toLowerCase().trim()
+        : "";
+
+      // BUAT DATA SEKOLAH
       if (!sekolahMap.has(namaSekolah)) {
+
         sekolahMap.set(namaSekolah, {
           nama: namaSekolah,
           laki: 0,
           perempuan: 0,
           total: 0,
         });
+
       }
 
       const sekolah: any = sekolahMap.get(namaSekolah);
@@ -92,6 +108,7 @@ export default function Home() {
       }
 
       sekolah.total += 1;
+
     });
 
     return Array.from(sekolahMap.values()).sort(
@@ -253,9 +270,11 @@ export default function Home() {
 
         {/* DASHBOARD */}
         {menu === "dashboard" && (
+
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
             {filteredData.map((item, index) => (
+
               <div
                 key={index}
                 className="bg-white rounded-[28px] border border-slate-200 shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden"
@@ -287,6 +306,7 @@ export default function Home() {
                         !key.toLowerCase().includes("waktu")
                     )
                     .map(([key, value], i) => (
+
                       <div
                         key={i}
                         className="py-3 border-b border-slate-100 last:border-b-0"
@@ -301,18 +321,22 @@ export default function Home() {
                         </div>
 
                       </div>
+
                     ))}
 
                 </div>
 
               </div>
+
             ))}
 
           </div>
+
         )}
 
         {/* REKAP SEKOLAH */}
         {menu === "sekolah" && (
+
           <div className="bg-white rounded-[28px] border border-slate-200 shadow-xl overflow-hidden">
 
             <div className="overflow-auto">
@@ -320,6 +344,7 @@ export default function Home() {
               <table className="w-full min-w-[700px]">
 
                 <thead className="bg-slate-100">
+
                   <tr>
 
                     <th className="text-left px-6 py-4 text-sm font-bold text-slate-700">
@@ -327,7 +352,7 @@ export default function Home() {
                     </th>
 
                     <th className="text-left px-6 py-4 text-sm font-bold text-slate-700">
-                      Sekolah
+                      Nama Sekolah
                     </th>
 
                     <th className="text-center px-6 py-4 text-sm font-bold text-slate-700">
@@ -343,10 +368,13 @@ export default function Home() {
                     </th>
 
                   </tr>
+
                 </thead>
 
                 <tbody>
+
                   {rekapSekolah.map((item: any, index) => (
+
                     <tr
                       key={index}
                       className="border-t border-slate-100 hover:bg-slate-50"
@@ -373,7 +401,9 @@ export default function Home() {
                       </td>
 
                     </tr>
+
                   ))}
+
                 </tbody>
 
               </table>
@@ -381,6 +411,7 @@ export default function Home() {
             </div>
 
           </div>
+
         )}
 
       </div>
