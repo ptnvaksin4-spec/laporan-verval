@@ -72,10 +72,11 @@ export default function Home() {
 
               <div className="text-3xl font-bold mt-2">
                 {
-                  filteredData.filter((item) =>
-                    item["Status Aktivasi"]
-                      ?.toLowerCase()
-                      .includes("sudah")
+                  filteredData.filter(
+                    (item) =>
+                      item["Status Aktivasi"]
+                        ?.toLowerCase()
+                        .trim() === "sudah"
                   ).length
                 }
               </div>
@@ -91,10 +92,11 @@ export default function Home() {
 
               <div className="text-3xl font-bold mt-2">
                 {
-                  filteredData.filter((item) =>
-                    item["Status Aktivasi"]
-                      ?.toLowerCase()
-                      .includes("belum")
+                  filteredData.filter(
+                    (item) =>
+                      item["Status Aktivasi"]
+                        ?.toLowerCase()
+                        .trim() === "belum"
                   ).length
                 }
               </div>
@@ -110,10 +112,11 @@ export default function Home() {
 
               <div className="text-3xl font-bold mt-2">
                 {
-                  filteredData.filter((item) =>
-                    item["Status Ajuan"]
-                      ?.toLowerCase()
-                      .includes("mengajukan revisi")
+                  filteredData.filter(
+                    (item) =>
+                      item["Status Ajuan"]
+                        ?.toLowerCase()
+                        .trim() === "mengajukan revisi"
                   ).length
                 }
               </div>
@@ -129,10 +132,11 @@ export default function Home() {
 
               <div className="text-3xl font-bold mt-2">
                 {
-                  filteredData.filter((item) =>
-                    item["Status Ajuan"]
-                      ?.toLowerCase()
-                      .includes("belum mengajukan revisi")
+                  filteredData.filter(
+                    (item) =>
+                      item["Status Ajuan"]
+                        ?.toLowerCase()
+                        .trim() === "belum mengajukan revisi"
                   ).length
                 }
               </div>
