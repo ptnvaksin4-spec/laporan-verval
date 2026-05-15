@@ -156,7 +156,7 @@ export default function Home() {
 
             <input
               type="text"
-              placeholder="Cari berdasarkan NISN atau Nama Peserta"
+              placeholder="Cari berdasarkan Nama, NISN, atau Sekolah"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full text-black text-sm md:text-base outline-none"
