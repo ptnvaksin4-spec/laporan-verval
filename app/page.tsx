@@ -32,6 +32,7 @@ export default function Home() {
       });
   }, []);
 
+  // FILTER SEARCH
   const filteredData = useMemo(() => {
     return data.filter((item) => {
       if (!search) return true;
@@ -45,57 +46,57 @@ export default function Home() {
 
   // REKAP SEKOLAH
   const rekapSekolah = useMemo(() => {
-    const result: any = {};
+    const sekolahMap = new Map();
 
     filteredData.forEach((item) => {
 
-      const sekolah =
+      const namaSekolah =
         item["Asal Sekolah"] ||
         item["Sekolah Asal"] ||
         item["Sekolah"] ||
-        "Tidak Diketahui";
+        "-";
 
-      const jk =
+      const jenisKelamin = (
         item["Jenis Kelamin"] ||
         item["JK"] ||
-        "";
+        ""
+      )
+        .toLowerCase()
+        .trim();
 
-      if (!result[sekolah]) {
-        result[sekolah] = {
+      if (!sekolahMap.has(namaSekolah)) {
+        sekolahMap.set(namaSekolah, {
+          nama: namaSekolah,
           laki: 0,
           perempuan: 0,
           total: 0,
-        };
+        });
       }
 
-      const jenisKelamin = jk.toLowerCase().trim();
+      const sekolah: any = sekolahMap.get(namaSekolah);
 
       // LAKI-LAKI
       if (
         jenisKelamin === "l" ||
-        jenisKelamin === "laki-laki" ||
-        jenisKelamin === "lakilaki"
+        jenisKelamin.includes("laki")
       ) {
-        result[sekolah].laki += 1;
+        sekolah.laki += 1;
       }
 
       // PEREMPUAN
       if (
         jenisKelamin === "p" ||
-        jenisKelamin === "perempuan"
+        jenisKelamin.includes("perempuan")
       ) {
-        result[sekolah].perempuan += 1;
+        sekolah.perempuan += 1;
       }
 
-      result[sekolah].total += 1;
+      sekolah.total += 1;
     });
 
-    return Object.entries(result)
-      .map(([nama, value]: any) => ({
-        nama,
-        ...value,
-      }))
-      .sort((a, b) => b.total - a.total);
+    return Array.from(sekolahMap.values()).sort(
+      (a: any, b: any) => b.total - a.total
+    );
 
   }, [filteredData]);
 
@@ -345,7 +346,7 @@ export default function Home() {
                 </thead>
 
                 <tbody>
-                  {rekapSekolah.map((item, index) => (
+                  {rekapSekolah.map((item: any, index) => (
                     <tr
                       key={index}
                       className="border-t border-slate-100 hover:bg-slate-50"
