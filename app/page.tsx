@@ -111,7 +111,7 @@ export default function Home() {
               <div className="text-3xl font-bold mt-2">
                 {
                   filteredData.filter((item) =>
-                    item["Status Revisi"]
+                    item["Status Ajuan"]
                       ?.toLowerCase()
                       .includes("mengajukan revisi")
                   ).length
@@ -130,7 +130,7 @@ export default function Home() {
               <div className="text-3xl font-bold mt-2">
                 {
                   filteredData.filter((item) =>
-                    item["Status Revisi"]
+                    item["Status Ajuan"]
                       ?.toLowerCase()
                       .includes("belum mengajukan revisi")
                   ).length
