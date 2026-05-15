@@ -63,25 +63,6 @@ export default function Home() {
           {/* STATISTIK */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
 
-            {/* BELUM AKTIVASI */}
-            <div className="bg-white/15 backdrop-blur-md rounded-3xl p-5 border border-white/10">
-
-              <div className="text-sm text-blue-100">
-                Belum Aktivasi
-              </div>
-
-              <div className="text-3xl font-bold mt-2">
-                {
-                  filteredData.filter((item) =>
-                    item["Status Aktivasi"]
-                      ?.toLowerCase()
-                      .includes("belum")
-                  ).length
-                }
-              </div>
-
-            </div>
-
             {/* SUDAH AKTIVASI */}
             <div className="bg-cyan-500/20 backdrop-blur-md rounded-3xl p-5 border border-cyan-300/20">
 
@@ -95,6 +76,25 @@ export default function Home() {
                     item["Status Aktivasi"]
                       ?.toLowerCase()
                       .includes("sudah")
+                  ).length
+                }
+              </div>
+
+            </div>
+
+            {/* BELUM AKTIVASI */}
+            <div className="bg-white/15 backdrop-blur-md rounded-3xl p-5 border border-white/10">
+
+              <div className="text-sm text-blue-100">
+                Belum Aktivasi
+              </div>
+
+              <div className="text-3xl font-bold mt-2">
+                {
+                  filteredData.filter((item) =>
+                    item["Status Aktivasi"]
+                      ?.toLowerCase()
+                      .includes("belum")
                   ).length
                 }
               </div>
@@ -120,11 +120,11 @@ export default function Home() {
 
             </div>
 
-            {/* BELUM MENGAJUKAN */}
+            {/* BELUM REVISI */}
             <div className="bg-red-500/20 backdrop-blur-md rounded-3xl p-5 border border-red-300/20">
 
               <div className="text-sm text-red-100">
-                Belum Mengajukan
+                Belum Revisi
               </div>
 
               <div className="text-3xl font-bold mt-2">
