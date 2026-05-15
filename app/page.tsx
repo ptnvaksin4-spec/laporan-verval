@@ -72,11 +72,10 @@ export default function Home() {
 
               <div className="text-3xl font-bold mt-2">
                 {
-                  filteredData.filter(
-                    (item) =>
-                      item["Status Aktivasi"]
-                        ?.toLowerCase()
-                        .trim() === "sudah"
+                  filteredData.filter((item) =>
+                    item["Status Aktivasi"]
+                      ?.toLowerCase()
+                      .includes("sudah")
                   ).length
                 }
               </div>
@@ -92,11 +91,10 @@ export default function Home() {
 
               <div className="text-3xl font-bold mt-2">
                 {
-                  filteredData.filter(
-                    (item) =>
-                      item["Status Aktivasi"]
-                        ?.toLowerCase()
-                        .trim() === "belum"
+                  filteredData.filter((item) =>
+                    item["Status Aktivasi"]
+                      ?.toLowerCase()
+                      .includes("belum")
                   ).length
                 }
               </div>
