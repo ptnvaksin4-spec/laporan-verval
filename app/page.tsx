@@ -131,7 +131,7 @@ export default function Home() {
             </h1>
 
             <p className="text-blue-100 mt-3 text-sm md:text-lg">
-              Dashboard Verifikasi dan Aktivasi Peserta
+              Informasi Status Ajuan Akun Pra SMPB
             </p>
           </div>
 
