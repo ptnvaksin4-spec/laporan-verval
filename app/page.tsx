@@ -175,7 +175,7 @@ export default function Home() {
 
           </div>
 
-          {/* STATISTIK DASHBOARD */}
+          {/* STATISTIK */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
 
             {/* SUDAH AKTIVASI */}
@@ -250,7 +250,7 @@ export default function Home() {
                       item["Status Ajuan"]
                         ?.toLowerCase()
                         .trim() === "belum mengajukan revisi"
-                    ).length
+                  ).length
                 }
               </div>
 
@@ -414,20 +414,7 @@ export default function Home() {
           <div className="space-y-6">
 
             {/* STATISTIK REKAP */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-              {/* KUOTA */}
-              <div className="bg-blue-50 rounded-3xl border border-blue-200 shadow-md p-5">
-
-                <div className="text-xs text-blue-700 font-semibold">
-                  Kuota
-                </div>
-
-                <div className="text-3xl font-bold text-blue-700 mt-2">
-                  288
-                </div>
-
-              </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
 
               {/* TOTAL PENDAFTAR */}
               <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-5">
@@ -442,33 +429,100 @@ export default function Home() {
 
               </div>
 
-              {/* STATUS PENDAFTAR */}
-              <div className="bg-indigo-50 rounded-3xl border border-indigo-200 shadow-md p-5">
+              {/* SUDAH AKTIVASI */}
+              <div className="bg-cyan-50 rounded-3xl border border-cyan-200 shadow-md p-5">
 
-                <div className="text-xs text-indigo-700 font-semibold">
-                  Status Pendaftar
+                <div className="text-xs text-cyan-700 font-semibold">
+                  Sudah Aktivasi
                 </div>
 
-                <div className="text-lg font-bold text-indigo-700 mt-2">
+                <div className="text-3xl font-bold text-cyan-700 mt-2">
+                  {
+                    data.filter((item) =>
+                      item["Status Aktivasi"]
+                        ?.toLowerCase()
+                        .includes("sudah")
+                    ).length
+                  }
+                </div>
 
-                  {data.length < 288 && (
-                    <span>
-                      Kekurangan {288 - data.length} Pendaftar
-                    </span>
-                  )}
+              </div>
 
-                  {data.length > 288 && (
-                    <span>
-                      Kelebihan {data.length - 288} Pendaftar
-                    </span>
-                  )}
+              {/* BELUM AKTIVASI */}
+              <div className="bg-blue-50 rounded-3xl border border-blue-200 shadow-md p-5">
 
-                  {data.length === 288 && (
-                    <span>
-                      Kuota Sudah Terpenuhi
-                    </span>
-                  )}
+                <div className="text-xs text-blue-700 font-semibold">
+                  Belum Aktivasi
+                </div>
 
+                <div className="text-3xl font-bold text-blue-700 mt-2">
+                  {
+                    data.filter((item) =>
+                      item["Status Aktivasi"]
+                        ?.toLowerCase()
+                        .includes("belum")
+                    ).length
+                  }
+                </div>
+
+              </div>
+
+              {/* SUDAH REVISI */}
+              <div className="bg-green-50 rounded-3xl border border-green-200 shadow-md p-5">
+
+                <div className="text-xs text-green-700 font-semibold">
+                  Sudah Revisi
+                </div>
+
+                <div className="text-3xl font-bold text-green-700 mt-2">
+                  {
+                    data.filter(
+                      (item) =>
+                        item["Status Ajuan"]
+                          ?.toLowerCase()
+                          .trim() === "mengajukan revisi"
+                    ).length
+                  }
+                </div>
+
+              </div>
+
+              {/* BELUM REVISI */}
+              <div className="bg-red-50 rounded-3xl border border-red-200 shadow-md p-5">
+
+                <div className="text-xs text-red-700 font-semibold">
+                  Belum Revisi
+                </div>
+
+                <div className="text-3xl font-bold text-red-700 mt-2">
+                  {
+                    data.filter(
+                      (item) =>
+                        item["Status Ajuan"]
+                          ?.toLowerCase()
+                          .trim() === "belum mengajukan revisi"
+                    ).length
+                  }
+                </div>
+
+              </div>
+
+              {/* AJUAN BARU */}
+              <div className="bg-yellow-50 rounded-3xl border border-yellow-200 shadow-md p-5">
+
+                <div className="text-xs text-yellow-700 font-semibold">
+                  Ajuan Baru
+                </div>
+
+                <div className="text-3xl font-bold text-yellow-700 mt-2">
+                  {
+                    data.filter(
+                      (item) =>
+                        item["Status Ajuan"]
+                          ?.toLowerCase()
+                          .includes("ajuan baru")
+                    ).length
+                  }
                 </div>
 
               </div>
