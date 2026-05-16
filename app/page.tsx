@@ -57,7 +57,7 @@ export default function Home() {
 
     filteredData.forEach((item) => {
 
-      // CARI KOLOM SEKOLAH OTOMATIS
+      // CARI KOLOM SEKOLAH
       const sekolahKey = Object.keys(item).find((key) =>
         key.toLowerCase().includes("sekolah")
       );
@@ -66,7 +66,7 @@ export default function Home() {
         ? item[sekolahKey]
         : "Tidak Diketahui";
 
-      // CARI KOLOM JK OTOMATIS
+      // CARI KOLOM JENIS KELAMIN
       const jkKey = Object.keys(item).find(
         (key) =>
           key.toLowerCase().includes("jenis kelamin") ||
@@ -126,13 +126,23 @@ export default function Home() {
         <div className="bg-gradient-to-r from-blue-800 via-indigo-700 to-blue-600 rounded-[32px] shadow-2xl p-6 md:p-10 text-white mb-8">
 
           <div>
+
             <h1 className="text-3xl md:text-5xl font-bold tracking-tight">
               Pra SMPB SMKN 1 Cipanas
             </h1>
 
-            <p className="text-blue-100 mt-3 text-sm md:text-lg">
-              Informasi Status Ajuan Akun Pra SMPB
-            </p>
+            <div className="mt-3">
+
+              <p className="text-blue-100 text-sm md:text-lg">
+                Informasi Status Ajuan Akun Pra SMPB
+              </p>
+
+              <p className="text-blue-200 text-xs md:text-sm mt-1">
+                Update data: 16 Mei 2026 • 15.30 WIB
+              </p>
+
+            </div>
+
           </div>
 
           {/* STATISTIK */}
@@ -283,6 +293,7 @@ export default function Home() {
                 <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-5 py-4 border-b border-slate-200 flex items-center justify-between">
 
                   <div>
+
                     <div className="text-sm font-bold text-blue-700">
                       Data Peserta
                     </div>
@@ -290,6 +301,7 @@ export default function Home() {
                     <div className="text-xs text-slate-500 mt-1">
                       Detail Verifikasi
                     </div>
+
                   </div>
 
                   <div className="bg-blue-600 text-white text-xs px-3 py-1 rounded-full">
