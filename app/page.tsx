@@ -287,26 +287,30 @@ export default function Home() {
 
         </div>
 
-        {/* SEARCH */}
-        <div className="bg-white rounded-[28px] shadow-xl border border-slate-200 p-4 md:p-6 mb-8">
+        {/* SEARCH HANYA DI DASHBOARD */}
+        {menu === "dashboard" && (
 
-          <div className="flex items-center gap-3">
+          <div className="bg-white rounded-[28px] shadow-xl border border-slate-200 p-4 md:p-6 mb-8">
 
-            <div className="text-slate-500 text-xl">
-              🔍
+            <div className="flex items-center gap-3">
+
+              <div className="text-slate-500 text-xl">
+                🔍
+              </div>
+
+              <input
+                type="text"
+                placeholder="Cari berdasarkan Nama, NISN, atau Sekolah"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full text-black text-sm md:text-base outline-none"
+              />
+
             </div>
-
-            <input
-              type="text"
-              placeholder="Cari berdasarkan Nama, NISN, atau Sekolah"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full text-black text-sm md:text-base outline-none"
-            />
 
           </div>
 
-        </div>
+        )}
 
         {/* DASHBOARD */}
         {menu === "dashboard" && (
