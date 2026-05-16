@@ -37,9 +37,10 @@ export default function Home() {
   // FILTER DATA
   const filteredData = useMemo(() => {
 
-    return data.filter((item) => {
+    // JIKA SEARCH KOSONG JANGAN TAMPILKAN DATA
+    if (!search.trim()) return [];
 
-      if (!search) return true;
+    return data.filter((item) => {
 
       return Object.values(item)
         .join(" ")
@@ -55,7 +56,7 @@ export default function Home() {
 
     const sekolahMap = new Map();
 
-    filteredData.forEach((item) => {
+    data.forEach((item) => {
 
       // CARI KOLOM SEKOLAH
       const sekolahKey = Object.keys(item).find((key) =>
@@ -115,7 +116,7 @@ export default function Home() {
       (a: any, b: any) => b.total - a.total
     );
 
-  }, [filteredData]);
+  }, [data]);
 
   return (
     <main className="min-h-screen bg-slate-100">
@@ -157,7 +158,7 @@ export default function Home() {
 
               <div className="text-3xl font-bold mt-2">
                 {
-                  filteredData.filter((item) =>
+                  data.filter((item) =>
                     item["Status Aktivasi"]
                       ?.toLowerCase()
                       .includes("sudah")
@@ -176,7 +177,7 @@ export default function Home() {
 
               <div className="text-3xl font-bold mt-2">
                 {
-                  filteredData.filter((item) =>
+                  data.filter((item) =>
                     item["Status Aktivasi"]
                       ?.toLowerCase()
                       .includes("belum")
@@ -195,7 +196,7 @@ export default function Home() {
 
               <div className="text-3xl font-bold mt-2">
                 {
-                  filteredData.filter(
+                  data.filter(
                     (item) =>
                       item["Status Ajuan"]
                         ?.toLowerCase()
@@ -215,7 +216,7 @@ export default function Home() {
 
               <div className="text-3xl font-bold mt-2">
                 {
-                  filteredData.filter(
+                  data.filter(
                     (item) =>
                       item["Status Ajuan"]
                         ?.toLowerCase()
@@ -281,68 +282,96 @@ export default function Home() {
         {/* DASHBOARD */}
         {menu === "dashboard" && (
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <>
+            {/* PESAN AWAL */}
+            {filteredData.length === 0 && (
 
-            {filteredData.map((item, index) => (
+              <div className="bg-white rounded-[28px] border border-slate-200 shadow-md p-10 text-center">
 
-              <div
-                key={index}
-                className="bg-white rounded-[28px] border border-slate-200 shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden"
-              >
-
-                <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-5 py-4 border-b border-slate-200 flex items-center justify-between">
-
-                  <div>
-
-                    <div className="text-sm font-bold text-blue-700">
-                      Data Peserta
-                    </div>
-
-                    <div className="text-xs text-slate-500 mt-1">
-                      Detail Verifikasi
-                    </div>
-
-                  </div>
-
-                  <div className="bg-blue-600 text-white text-xs px-3 py-1 rounded-full">
-                    #{index + 1}
-                  </div>
-
+                <div className="text-5xl mb-4">
+                  🔍
                 </div>
 
-                <div className="p-5">
+                <h2 className="text-xl font-bold text-slate-700">
+                  Cari Data Peserta
+                </h2>
 
-                  {Object.entries(item)
-                    .filter(
-                      ([key]) =>
-                        !key.toLowerCase().includes("waktu")
-                    )
-                    .map(([key, value], i) => (
+                <p className="text-slate-500 mt-2">
+                  Masukkan Nama atau NISN untuk menampilkan data peserta.
+                </p>
 
-                      <div
-                        key={i}
-                        className="py-3 border-b border-slate-100 last:border-b-0"
-                      >
+              </div>
 
-                        <div className="text-[11px] uppercase tracking-wider font-bold text-slate-400 mb-1">
-                          {key}
+            )}
+
+            {/* DATA PESERTA */}
+            {filteredData.length > 0 && (
+
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+                {filteredData.map((item, index) => (
+
+                  <div
+                    key={index}
+                    className="bg-white rounded-[28px] border border-slate-200 shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden"
+                  >
+
+                    <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-5 py-4 border-b border-slate-200 flex items-center justify-between">
+
+                      <div>
+
+                        <div className="text-sm font-bold text-blue-700">
+                          Data Peserta
                         </div>
 
-                        <div className="text-sm md:text-base text-slate-800 font-semibold break-words">
-                          {String(value)}
+                        <div className="text-xs text-slate-500 mt-1">
+                          Detail Verifikasi
                         </div>
 
                       </div>
 
-                    ))}
+                      <div className="bg-blue-600 text-white text-xs px-3 py-1 rounded-full">
+                        #{index + 1}
+                      </div>
 
-                </div>
+                    </div>
+
+                    <div className="p-5">
+
+                      {Object.entries(item)
+                        .filter(
+                          ([key]) =>
+                            !key.toLowerCase().includes("waktu")
+                        )
+                        .map(([key, value], i) => (
+
+                          <div
+                            key={i}
+                            className="py-3 border-b border-slate-100 last:border-b-0"
+                          >
+
+                            <div className="text-[11px] uppercase tracking-wider font-bold text-slate-400 mb-1">
+                              {key}
+                            </div>
+
+                            <div className="text-sm md:text-base text-slate-800 font-semibold break-words">
+                              {String(value)}
+                            </div>
+
+                          </div>
+
+                        ))}
+
+                    </div>
+
+                  </div>
+
+                ))}
 
               </div>
 
-            ))}
-
-          </div>
+            )}
+          </>
 
         )}
 
