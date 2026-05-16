@@ -10,9 +10,6 @@ export default function Home() {
   // LOCK MENU REKAP SEKOLAH
   const [unlockSekolah, setUnlockSekolah] = useState(false);
 
-  // KUOTA
-  const KUOTA = 288;
-
   useEffect(() => {
     fetch("/laporan.csv")
       .then((res) => res.text())
@@ -56,12 +53,6 @@ export default function Home() {
     });
 
   }, [data, search]);
-
-  // TOTAL PENDAFTAR
-  const totalPendaftar = data.length;
-
-  // SELISIH KUOTA
-  const selisihKuota = KUOTA - totalPendaftar;
 
   // REKAP SEKOLAH
   const rekapSekolah = useMemo(() => {
@@ -180,126 +171,92 @@ export default function Home() {
                 Update data: 16 Mei 2026 • 19.30 WIB
               </p>
 
-              {/* KHUSUS MENU REKAP SEKOLAH */}
-              {menu === "sekolah" && (
-
-                <div className="mt-4 space-y-1">
-
-                  <p className="text-white text-sm md:text-base font-semibold">
-                    Kuota: {KUOTA}
-                  </p>
-
-                  <p className="text-white text-sm md:text-base font-semibold">
-                    Total Pendaftar: {totalPendaftar}
-                  </p>
-
-                  <p className="text-yellow-200 text-sm md:text-base font-semibold">
-
-                    {selisihKuota > 0 &&
-                      `Kekurangan Pendaftar: ${selisihKuota}`}
-
-                    {selisihKuota < 0 &&
-                      `Kelebihan Pendaftar: ${Math.abs(selisihKuota)}`}
-
-                    {selisihKuota === 0 &&
-                      "Kuota Pendaftar Sudah Penuh"}
-
-                  </p>
-
-                </div>
-
-              )}
-
             </div>
 
           </div>
 
-          {/* STATISTIK HANYA DASHBOARD */}
-          {menu === "dashboard" && (
+          {/* STATISTIK */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+            {/* SUDAH AKTIVASI */}
+            <div className="bg-cyan-500/20 backdrop-blur-md rounded-3xl p-5 border border-cyan-300/20">
 
-              {/* SUDAH AKTIVASI */}
-              <div className="bg-cyan-500/20 backdrop-blur-md rounded-3xl p-5 border border-cyan-300/20">
-
-                <div className="text-sm text-cyan-100">
-                  Sudah Aktivasi
-                </div>
-
-                <div className="text-3xl font-bold mt-2">
-                  {
-                    data.filter((item) =>
-                      item["Status Aktivasi"]
-                        ?.toLowerCase()
-                        .includes("sudah")
-                    ).length
-                  }
-                </div>
-
+              <div className="text-sm text-cyan-100">
+                Sudah Aktivasi
               </div>
 
-              {/* BELUM AKTIVASI */}
-              <div className="bg-white/15 backdrop-blur-md rounded-3xl p-5 border border-white/10">
-
-                <div className="text-sm text-blue-100">
-                  Belum Aktivasi
-                </div>
-
-                <div className="text-3xl font-bold mt-2">
-                  {
-                    data.filter((item) =>
-                      item["Status Aktivasi"]
-                        ?.toLowerCase()
-                        .includes("belum")
-                    ).length
-                  }
-                </div>
-
-              </div>
-
-              {/* MENGAJUKAN REVISI */}
-              <div className="bg-green-500/20 backdrop-blur-md rounded-3xl p-5 border border-green-300/20">
-
-                <div className="text-sm text-green-100">
-                  Mengajukan Revisi
-                </div>
-
-                <div className="text-3xl font-bold mt-2">
-                  {
-                    data.filter(
-                      (item) =>
-                        item["Status Ajuan"]
-                          ?.toLowerCase()
-                          .trim() === "mengajukan revisi"
-                    ).length
-                  }
-                </div>
-
-              </div>
-
-              {/* BELUM REVISI */}
-              <div className="bg-red-500/20 backdrop-blur-md rounded-3xl p-5 border border-red-300/20">
-
-                <div className="text-sm text-red-100">
-                  Belum Revisi
-                </div>
-
-                <div className="text-3xl font-bold mt-2">
-                  {
-                    data.filter(
-                      (item) =>
-                        item["Status Ajuan"]
-                          ?.toLowerCase()
-                          .trim() === "belum mengajukan revisi"
-                    ).length
-                  }
-                </div>
-
+              <div className="text-3xl font-bold mt-2">
+                {
+                  data.filter((item) =>
+                    item["Status Aktivasi"]
+                      ?.toLowerCase()
+                      .includes("sudah")
+                  ).length
+                }
               </div>
 
             </div>
 
-          )}
+            {/* BELUM AKTIVASI */}
+            <div className="bg-white/15 backdrop-blur-md rounded-3xl p-5 border border-white/10">
+
+              <div className="text-sm text-blue-100">
+                Belum Aktivasi
+              </div>
+
+              <div className="text-3xl font-bold mt-2">
+                {
+                  data.filter((item) =>
+                    item["Status Aktivasi"]
+                      ?.toLowerCase()
+                      .includes("belum")
+                  ).length
+                }
+              </div>
+
+            </div>
+
+            {/* MENGAJUKAN REVISI */}
+            <div className="bg-green-500/20 backdrop-blur-md rounded-3xl p-5 border border-green-300/20">
+
+              <div className="text-sm text-green-100">
+                Mengajukan Revisi
+              </div>
+
+              <div className="text-3xl font-bold mt-2">
+                {
+                  data.filter(
+                    (item) =>
+                      item["Status Ajuan"]
+                        ?.toLowerCase()
+                        .trim() === "mengajukan revisi"
+                  ).length
+                }
+              </div>
+
+            </div>
+
+            {/* BELUM REVISI */}
+            <div className="bg-red-500/20 backdrop-blur-md rounded-3xl p-5 border border-red-300/20">
+
+              <div className="text-sm text-red-100">
+                Belum Revisi
+              </div>
+
+              <div className="text-3xl font-bold mt-2">
+                {
+                  data.filter(
+                    (item) =>
+                      item["Status Ajuan"]
+                        ?.toLowerCase()
+                        .trim() === "belum mengajukan revisi"
+                  ).length
+                }
+              </div>
+
+            </div>
+
+          </div>
 
         </div>
 
@@ -330,30 +287,26 @@ export default function Home() {
 
         </div>
 
-        {/* SEARCH HANYA DASHBOARD */}
-        {menu === "dashboard" && (
+        {/* SEARCH */}
+        <div className="bg-white rounded-[28px] shadow-xl border border-slate-200 p-4 md:p-6 mb-8">
 
-          <div className="bg-white rounded-[28px] shadow-xl border border-slate-200 p-4 md:p-6 mb-8">
+          <div className="flex items-center gap-3">
 
-            <div className="flex items-center gap-3">
-
-              <div className="text-slate-500 text-xl">
-                🔍
-              </div>
-
-              <input
-                type="text"
-                placeholder="Cari berdasarkan Nama, NISN, atau Sekolah"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full text-black text-sm md:text-base outline-none"
-              />
-
+            <div className="text-slate-500 text-xl">
+              🔍
             </div>
+
+            <input
+              type="text"
+              placeholder="Cari berdasarkan Nama, NISN, atau Sekolah"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full text-black text-sm md:text-base outline-none"
+            />
 
           </div>
 
-        )}
+        </div>
 
         {/* DASHBOARD */}
         {menu === "dashboard" && (
@@ -447,7 +400,6 @@ export default function Home() {
               </div>
 
             )}
-
           </>
 
         )}
@@ -455,76 +407,197 @@ export default function Home() {
         {/* REKAP SEKOLAH */}
         {menu === "sekolah" && (
 
-          <div className="bg-white rounded-[28px] border border-slate-200 shadow-xl overflow-hidden">
+          <div className="space-y-6">
 
-            <div className="overflow-auto">
+            {/* STATISTIK REKAP */}
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
 
-              <table className="w-full min-w-[700px]">
+              {/* TOTAL PENDAFTAR */}
+              <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-5">
 
-                <thead className="bg-slate-100">
+                <div className="text-xs text-slate-500 font-semibold">
+                  Total Pendaftar
+                </div>
 
-                  <tr>
+                <div className="text-3xl font-bold text-slate-800 mt-2">
+                  {data.length}
+                </div>
 
-                    <th className="text-left px-6 py-4 text-sm font-bold text-slate-700">
-                      No
-                    </th>
+              </div>
 
-                    <th className="text-left px-6 py-4 text-sm font-bold text-slate-700">
-                      Nama Sekolah
-                    </th>
+              {/* SUDAH AKTIVASI */}
+              <div className="bg-cyan-50 rounded-3xl border border-cyan-200 shadow-md p-5">
 
-                    <th className="text-center px-6 py-4 text-sm font-bold text-slate-700">
-                      Laki-Laki
-                    </th>
+                <div className="text-xs text-cyan-700 font-semibold">
+                  Sudah Aktivasi
+                </div>
 
-                    <th className="text-center px-6 py-4 text-sm font-bold text-slate-700">
-                      Perempuan
-                    </th>
+                <div className="text-3xl font-bold text-cyan-700 mt-2">
+                  {
+                    data.filter((item) =>
+                      item["Status Aktivasi"]
+                        ?.toLowerCase()
+                        .includes("sudah")
+                    ).length
+                  }
+                </div>
 
-                    <th className="text-center px-6 py-4 text-sm font-bold text-slate-700">
-                      Total
-                    </th>
+              </div>
 
-                  </tr>
+              {/* BELUM AKTIVASI */}
+              <div className="bg-blue-50 rounded-3xl border border-blue-200 shadow-md p-5">
 
-                </thead>
+                <div className="text-xs text-blue-700 font-semibold">
+                  Belum Aktivasi
+                </div>
 
-                <tbody>
+                <div className="text-3xl font-bold text-blue-700 mt-2">
+                  {
+                    data.filter((item) =>
+                      item["Status Aktivasi"]
+                        ?.toLowerCase()
+                        .includes("belum")
+                    ).length
+                  }
+                </div>
 
-                  {rekapSekolah.map((item: any, index) => (
+              </div>
 
-                    <tr
-                      key={index}
-                      className="border-t border-slate-100 hover:bg-slate-50"
-                    >
+              {/* SUDAH REVISI */}
+              <div className="bg-green-50 rounded-3xl border border-green-200 shadow-md p-5">
 
-                      <td className="px-6 py-4 text-sm text-slate-700">
-                        {index + 1}
-                      </td>
+                <div className="text-xs text-green-700 font-semibold">
+                  Sudah Revisi
+                </div>
 
-                      <td className="px-6 py-4 text-sm font-semibold text-slate-800">
-                        {item.nama}
-                      </td>
+                <div className="text-3xl font-bold text-green-700 mt-2">
+                  {
+                    data.filter(
+                      (item) =>
+                        item["Status Ajuan"]
+                          ?.toLowerCase()
+                          .trim() === "mengajukan revisi"
+                    ).length
+                  }
+                </div>
 
-                      <td className="px-6 py-4 text-center text-sm text-blue-700 font-bold">
-                        {item.laki}
-                      </td>
+              </div>
 
-                      <td className="px-6 py-4 text-center text-sm text-pink-700 font-bold">
-                        {item.perempuan}
-                      </td>
+              {/* BELUM REVISI */}
+              <div className="bg-red-50 rounded-3xl border border-red-200 shadow-md p-5">
 
-                      <td className="px-6 py-4 text-center text-sm font-bold text-slate-900">
-                        {item.total}
-                      </td>
+                <div className="text-xs text-red-700 font-semibold">
+                  Belum Revisi
+                </div>
+
+                <div className="text-3xl font-bold text-red-700 mt-2">
+                  {
+                    data.filter(
+                      (item) =>
+                        item["Status Ajuan"]
+                          ?.toLowerCase()
+                          .trim() === "belum mengajukan revisi"
+                    ).length
+                  }
+                </div>
+
+              </div>
+
+              {/* AJUAN BARU */}
+              <div className="bg-yellow-50 rounded-3xl border border-yellow-200 shadow-md p-5">
+
+                <div className="text-xs text-yellow-700 font-semibold">
+                  Ajuan Baru
+                </div>
+
+                <div className="text-3xl font-bold text-yellow-700 mt-2">
+                  {
+                    data.filter(
+                      (item) =>
+                        item["Status Ajuan"]
+                          ?.toLowerCase()
+                          .includes("ajuan baru")
+                    ).length
+                  }
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* TABEL SEKOLAH */}
+            <div className="bg-white rounded-[28px] border border-slate-200 shadow-xl overflow-hidden">
+
+              <div className="overflow-auto">
+
+                <table className="w-full min-w-[700px]">
+
+                  <thead className="bg-slate-100">
+
+                    <tr>
+
+                      <th className="text-left px-6 py-4 text-sm font-bold text-slate-700">
+                        No
+                      </th>
+
+                      <th className="text-left px-6 py-4 text-sm font-bold text-slate-700">
+                        Nama Sekolah
+                      </th>
+
+                      <th className="text-center px-6 py-4 text-sm font-bold text-slate-700">
+                        Laki-Laki
+                      </th>
+
+                      <th className="text-center px-6 py-4 text-sm font-bold text-slate-700">
+                        Perempuan
+                      </th>
+
+                      <th className="text-center px-6 py-4 text-sm font-bold text-slate-700">
+                        Total
+                      </th>
 
                     </tr>
 
-                  ))}
+                  </thead>
 
-                </tbody>
+                  <tbody>
 
-              </table>
+                    {rekapSekolah.map((item: any, index) => (
+
+                      <tr
+                        key={index}
+                        className="border-t border-slate-100 hover:bg-slate-50"
+                      >
+
+                        <td className="px-6 py-4 text-sm text-slate-700">
+                          {index + 1}
+                        </td>
+
+                        <td className="px-6 py-4 text-sm font-semibold text-slate-800">
+                          {item.nama}
+                        </td>
+
+                        <td className="px-6 py-4 text-center text-sm text-blue-700 font-bold">
+                          {item.laki}
+                        </td>
+
+                        <td className="px-6 py-4 text-center text-sm text-pink-700 font-bold">
+                          {item.perempuan}
+                        </td>
+
+                        <td className="px-6 py-4 text-center text-sm font-bold text-slate-900">
+                          {item.total}
+                        </td>
+
+                      </tr>
+
+                    ))}
+
+                  </tbody>
+
+                </table>
+
+              </div>
 
             </div>
 
