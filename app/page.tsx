@@ -7,6 +7,9 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [menu, setMenu] = useState("dashboard");
 
+  // LOCK MENU REKAP SEKOLAH
+  const [unlockSekolah, setUnlockSekolah] = useState(false);
+
   useEffect(() => {
     fetch("/laporan.csv")
       .then((res) => res.text())
@@ -37,7 +40,7 @@ export default function Home() {
   // FILTER DATA
   const filteredData = useMemo(() => {
 
-    // JIKA SEARCH KOSONG JANGAN TAMPILKAN DATA
+    // DATA HANYA MUNCUL SETELAH SEARCH
     if (!search.trim()) return [];
 
     return data.filter((item) => {
@@ -117,6 +120,32 @@ export default function Home() {
     );
 
   }, [data]);
+
+  // BUKA MENU REKAP SEKOLAH
+  const handleOpenSekolah = () => {
+
+    // JIKA SUDAH TERBUKA
+    if (unlockSekolah) {
+      setMenu("sekolah");
+      return;
+    }
+
+    // INPUT KODE
+    const kode = prompt("Masukkan kode akses");
+
+    // CEK KODE
+    if (kode === "20607872") {
+
+      setUnlockSekolah(true);
+      setMenu("sekolah");
+
+    } else {
+
+      alert("Kode akses salah");
+
+    }
+
+  };
 
   return (
     <main className="min-h-screen bg-slate-100">
@@ -246,14 +275,14 @@ export default function Home() {
           </button>
 
           <button
-            onClick={() => setMenu("sekolah")}
+            onClick={handleOpenSekolah}
             className={`px-5 py-3 rounded-2xl text-sm font-semibold transition-all ${
               menu === "sekolah"
                 ? "bg-blue-600 text-white"
                 : "bg-white text-slate-700 border border-slate-200"
             }`}
           >
-            Rekap Sekolah
+            🔒 Rekap Sekolah
           </button>
 
         </div>
