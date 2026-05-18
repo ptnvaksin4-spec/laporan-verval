@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 export default function Home() {
+
   const [data, setData] = useState<any[]>([]);
   const [search, setSearch] = useState("");
 
@@ -15,7 +16,9 @@ export default function Home() {
   // KUOTA
   const KUOTA = 288;
 
+  // LOAD CSV
   useEffect(() => {
+
     fetch("/laporan.csv")
       .then((res) => res.text())
       .then((text) => {
@@ -28,6 +31,7 @@ export default function Home() {
         const headers = rows[0];
 
         const result = rows.slice(1).map((row) => {
+
           const obj: any = {};
 
           headers.forEach((header, index) => {
@@ -35,14 +39,16 @@ export default function Home() {
           });
 
           return obj;
+
         });
 
         setData(result);
+
       });
 
   }, []);
 
-  // FILTER DATA
+  // FILTER SEARCH
   const filteredData = useMemo(() => {
 
     if (!search.trim()) return [];
@@ -58,77 +64,122 @@ export default function Home() {
 
   }, [data, search]);
 
+  // =========================
   // TOTAL DATA
+  // =========================
+
   const totalPendaftar = data.length;
 
+  // SUDAH AKTIVASI
   const totalSudahAktivasi = data.filter((item) => {
 
-    const value = Object.values(item)
-      .join(" ")
-      .toLowerCase();
+    const aktivasiKey = Object.keys(item).find(
+      (key) =>
+        key.toLowerCase().includes("aktivasi")
+    );
 
-    return value.includes("sudah aktivasi");
+    const value = aktivasiKey
+      ? String(item[aktivasiKey]).toLowerCase()
+      : "";
+
+    return value.includes("sudah");
 
   }).length;
 
+  // BELUM AKTIVASI
   const totalBelumAktivasi = data.filter((item) => {
 
-    const value = Object.values(item)
-      .join(" ")
-      .toLowerCase();
+    const aktivasiKey = Object.keys(item).find(
+      (key) =>
+        key.toLowerCase().includes("aktivasi")
+    );
 
-    return value.includes("belum aktivasi");
+    const value = aktivasiKey
+      ? String(item[aktivasiKey]).toLowerCase()
+      : "";
+
+    return value.includes("belum");
 
   }).length;
 
+  // BELUM REVISI
   const totalBelumRevisi = data.filter((item) => {
 
-    const value = Object.values(item)
-      .join(" ")
-      .toLowerCase();
+    const revisiKey = Object.keys(item).find(
+      (key) =>
+        key.toLowerCase().includes("ajuan")
+    );
+
+    const value = revisiKey
+      ? String(item[revisiKey]).toLowerCase()
+      : "";
 
     return value.includes("belum mengajukan revisi");
 
   }).length;
 
+  // AJUAN BARU
   const totalAjuanBaru = data.filter((item) => {
 
-    const value = Object.values(item)
-      .join(" ")
-      .toLowerCase();
+    const revisiKey = Object.keys(item).find(
+      (key) =>
+        key.toLowerCase().includes("ajuan")
+    );
+
+    const value = revisiKey
+      ? String(item[revisiKey]).toLowerCase()
+      : "";
 
     return value.includes("ajuan baru");
 
   }).length;
 
-  // TOTAL JENIS KELAMIN
+  // =========================
+  // JENIS KELAMIN
+  // =========================
+
   const totalLaki = data.filter((item) => {
 
-    const value = Object.values(item)
-      .join(" ")
-      .toLowerCase();
+    const jkKey = Object.keys(item).find(
+      (key) =>
+        key.toLowerCase().includes("kelamin") ||
+        key.toLowerCase() === "jk"
+    );
+
+    const value = jkKey
+      ? String(item[jkKey]).toLowerCase()
+      : "";
 
     return (
-      value.includes("laki") ||
-      value.includes('"l"')
+      value === "l" ||
+      value.includes("laki")
     );
 
   }).length;
 
   const totalPerempuan = data.filter((item) => {
 
-    const value = Object.values(item)
-      .join(" ")
-      .toLowerCase();
+    const jkKey = Object.keys(item).find(
+      (key) =>
+        key.toLowerCase().includes("kelamin") ||
+        key.toLowerCase() === "jk"
+    );
+
+    const value = jkKey
+      ? String(item[jkKey]).toLowerCase()
+      : "";
 
     return (
-      value.includes("perempuan") ||
-      value.includes('"p"')
+      value === "p" ||
+      value.includes("perempuan")
     );
 
   }).length;
 
-  // ASAL WILAYAH
+  // =========================
+  // REKAP WILAYAH
+  // =========================
+
   const wilayahMap = useMemo(() => {
 
     const map = new Map();
@@ -148,7 +199,10 @@ export default function Home() {
         map.set(wilayah, 0);
       }
 
-      map.set(wilayah, map.get(wilayah) + 1);
+      map.set(
+        wilayah,
+        map.get(wilayah) + 1
+      );
 
     });
 
@@ -158,15 +212,19 @@ export default function Home() {
 
   }, [data]);
 
+  // =========================
   // REKAP SEKOLAH
+  // =========================
+
   const rekapSekolah = useMemo(() => {
 
     const sekolahMap = new Map();
 
     data.forEach((item) => {
 
-      const sekolahKey = Object.keys(item).find((key) =>
-        key.toLowerCase().includes("sekolah")
+      const sekolahKey = Object.keys(item).find(
+        (key) =>
+          key.toLowerCase().includes("sekolah")
       );
 
       const namaSekolah = sekolahKey
@@ -175,12 +233,12 @@ export default function Home() {
 
       const jkKey = Object.keys(item).find(
         (key) =>
-          key.toLowerCase().includes("jenis kelamin") ||
+          key.toLowerCase().includes("kelamin") ||
           key.toLowerCase() === "jk"
       );
 
       const jenisKelamin = jkKey
-        ? String(item[jkKey]).toLowerCase().trim()
+        ? String(item[jkKey]).toLowerCase()
         : "";
 
       if (!sekolahMap.has(namaSekolah)) {
@@ -194,7 +252,8 @@ export default function Home() {
 
       }
 
-      const sekolah: any = sekolahMap.get(namaSekolah);
+      const sekolah: any =
+        sekolahMap.get(namaSekolah);
 
       if (
         jenisKelamin === "l" ||
@@ -220,7 +279,10 @@ export default function Home() {
 
   }, [data]);
 
-  // MENU REKAP SEKOLAH
+  // =========================
+  // MENU LOCK
+  // =========================
+
   const handleOpenSekolah = () => {
 
     if (unlockSekolah) {
@@ -243,7 +305,6 @@ export default function Home() {
 
   };
 
-  // MENU REKAP ADMIN
   const handleOpenAdmin = () => {
 
     if (unlockAdmin) {
@@ -272,23 +333,19 @@ export default function Home() {
       <div className="max-w-7xl mx-auto p-4 md:p-8">
 
         {/* HEADER */}
-        <div className="bg-gradient-to-r from-blue-800 via-indigo-700 to-blue-600 rounded-[32px] shadow-2xl p-6 md:p-10 text-white mb-8">
+        <div className="bg-gradient-to-r from-blue-800 via-indigo-700 to-blue-600 rounded-[36px] shadow-2xl p-8 md:p-10 text-white mb-8">
 
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight">
             Pra SMPB SMKN 1 Cipanas
           </h1>
 
-          <div className="mt-3">
+          <p className="text-blue-100 mt-4 text-sm md:text-lg">
+            Informasi Status Ajuan Akun Pra SMPB
+          </p>
 
-            <p className="text-blue-100 text-sm md:text-lg">
-              Informasi Status Ajuan Akun Pra SMPB
-            </p>
-
-            <p className="text-blue-200 text-xs md:text-sm mt-1">
-              Update data: 18 Mei 2026 • 19.00 WIB
-            </p>
-
-          </div>
+          <p className="text-blue-200 mt-2 text-xs md:text-sm">
+            Update data: 18 Mei 2026 • 19.00 WIB
+          </p>
 
         </div>
 
@@ -330,55 +387,55 @@ export default function Home() {
 
         </div>
 
-        {/* SEARCH */}
-        {menu === "dashboard" && (
-
-          <div className="bg-white rounded-[28px] shadow-xl border border-slate-200 p-4 md:p-6 mb-8">
-
-            <div className="flex items-center gap-3">
-
-              <div className="text-slate-500 text-xl">
-                🔍
-              </div>
-
-              <input
-                type="text"
-                placeholder="Cari berdasarkan Nama, NISN, atau Sekolah"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full text-black text-sm md:text-base outline-none"
-              />
-
-            </div>
-
-          </div>
-
-        )}
-
         {/* DASHBOARD */}
         {menu === "dashboard" && (
 
           <>
-            {filteredData.length === 0 && (
+            {/* SEARCH */}
+            <div className="bg-white rounded-[28px] shadow-xl border border-slate-200 p-4 md:p-6 mb-8">
 
-              <div className="bg-white rounded-[28px] border border-slate-200 shadow-md p-10 text-center">
+              <div className="flex items-center gap-3">
 
-                <div className="text-5xl mb-4">
+                <div className="text-slate-500 text-xl">
                   🔍
                 </div>
 
-                <h2 className="text-xl font-bold text-slate-700">
+                <input
+                  type="text"
+                  placeholder="Cari berdasarkan Nama, NISN, atau Sekolah"
+                  value={search}
+                  onChange={(e) =>
+                    setSearch(e.target.value)
+                  }
+                  className="w-full text-black text-sm md:text-base outline-none"
+                />
+
+              </div>
+
+            </div>
+
+            {/* EMPTY */}
+            {filteredData.length === 0 && (
+
+              <div className="bg-white rounded-[32px] border border-slate-200 shadow-md p-10 text-center">
+
+                <div className="text-6xl mb-5">
+                  🔎
+                </div>
+
+                <h2 className="text-2xl font-bold text-slate-700">
                   Cari Data Peserta
                 </h2>
 
-                <p className="text-slate-500 mt-2">
-                  Masukkan Nama atau NISN untuk menampilkan data peserta.
+                <p className="text-slate-500 mt-3">
+                  Masukkan Nama, NISN, atau Sekolah untuk menampilkan data peserta.
                 </p>
 
               </div>
 
             )}
 
+            {/* DATA */}
             {filteredData.length > 0 && (
 
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -452,7 +509,15 @@ export default function Home() {
         {/* REKAP SEKOLAH */}
         {menu === "sekolah" && (
 
-          <div className="bg-white rounded-[28px] border border-slate-200 shadow-xl overflow-hidden">
+          <div className="bg-white rounded-[32px] border border-slate-200 shadow-xl overflow-hidden">
+
+            <div className="px-6 py-5 border-b border-slate-200 bg-slate-50">
+
+              <h2 className="text-2xl font-bold text-slate-800">
+                Rekap Sekolah
+              </h2>
+
+            </div>
 
             <div className="overflow-auto">
 
@@ -492,7 +557,7 @@ export default function Home() {
 
                     <tr
                       key={index}
-                      className="border-t border-slate-100"
+                      className="border-t border-slate-100 hover:bg-slate-50"
                     >
 
                       <td className="px-6 py-4">
@@ -535,167 +600,30 @@ export default function Home() {
           <div className="space-y-8">
 
             {/* HEADER ADMIN */}
-            <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-[32px] p-8 text-white shadow-2xl">
+            <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 rounded-[36px] p-8 md:p-10 text-white shadow-2xl">
 
-              <h2 className="text-3xl md:text-4xl font-bold">
-                Rekap Admin
-              </h2>
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
 
-              <p className="text-slate-300 mt-2">
-                Statistik keseluruhan data Pra SMPB SMKN 1 Cipanas
-              </p>
+                <div>
 
-            </div>
+                  <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
+                    Rekap Admin
+                  </h2>
 
-            {/* STATISTIK */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-
-              <div className="bg-white rounded-[28px] p-6 shadow-lg border border-slate-200">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-sm text-slate-500">
-                      Total Pendaftar
-                    </p>
-
-                    <h3 className="text-4xl font-bold text-slate-800 mt-2">
-                      {totalPendaftar}
-                    </h3>
-
-                  </div>
-
-                  <div className="text-5xl">
-                    📋
-                  </div>
+                  <p className="text-slate-300 mt-3 text-sm md:text-base">
+                    Statistik keseluruhan data Pra SMPB SMKN 1 Cipanas
+                  </p>
 
                 </div>
 
-              </div>
+                <div className="bg-white/10 backdrop-blur-md rounded-3xl px-6 py-5 border border-white/10">
 
-              <div className="bg-gradient-to-br from-cyan-500 to-blue-600 rounded-[28px] p-6 shadow-lg text-white">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-sm text-cyan-100">
-                      Sudah Aktivasi
-                    </p>
-
-                    <h3 className="text-4xl font-bold mt-2">
-                      {totalSudahAktivasi}
-                    </h3>
-
+                  <div className="text-sm text-slate-300">
+                    Total Kuota
                   </div>
 
-                  <div className="text-5xl">
-                    ✅
-                  </div>
-
-                </div>
-
-              </div>
-
-              <div className="bg-gradient-to-br from-orange-400 to-red-500 rounded-[28px] p-6 shadow-lg text-white">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-sm text-orange-100">
-                      Belum Aktivasi
-                    </p>
-
-                    <h3 className="text-4xl font-bold mt-2">
-                      {totalBelumAktivasi}
-                    </h3>
-
-                  </div>
-
-                  <div className="text-5xl">
-                    ⏳
-                  </div>
-
-                </div>
-
-              </div>
-
-              <div className="bg-gradient-to-br from-pink-500 to-rose-600 rounded-[28px] p-6 shadow-lg text-white">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-sm text-pink-100">
-                      Belum Revisi
-                    </p>
-
-                    <h3 className="text-4xl font-bold mt-2">
-                      {totalBelumRevisi}
-                    </h3>
-
-                  </div>
-
-                  <div className="text-5xl">
-                    📝
-                  </div>
-
-                </div>
-
-              </div>
-
-              <div className="bg-gradient-to-br from-violet-500 to-purple-700 rounded-[28px] p-6 shadow-lg text-white">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-sm text-violet-100">
-                      Ajuan Baru
-                    </p>
-
-                    <h3 className="text-4xl font-bold mt-2">
-                      {totalAjuanBaru}
-                    </h3>
-
-                  </div>
-
-                  <div className="text-5xl">
-                    🆕
-                  </div>
-
-                </div>
-
-              </div>
-
-              <div className="bg-gradient-to-br from-slate-700 to-slate-900 rounded-[28px] p-6 shadow-lg text-white">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-sm text-slate-300">
-                      Selisih Kuota
-                    </p>
-
-                    <h3 className="text-4xl font-bold mt-2">
-
-                      {totalPendaftar > KUOTA
-                        ? `+${totalPendaftar - KUOTA}`
-                        : `-${KUOTA - totalPendaftar}`}
-
-                    </h3>
-
-                    <p className="text-xs text-slate-400 mt-2">
-                      Kuota Maksimal {KUOTA}
-                    </p>
-
-                  </div>
-
-                  <div className="text-5xl">
-                    🎯
+                  <div className="text-4xl font-bold mt-2">
+                    {KUOTA}
                   </div>
 
                 </div>
@@ -704,130 +632,82 @@ export default function Home() {
 
             </div>
 
-            {/* JENIS KELAMIN */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* CARD */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
 
-              <div className="bg-white rounded-[28px] p-8 shadow-lg border border-slate-200">
+              <div className="bg-white rounded-[32px] p-7 shadow-xl border border-slate-200">
 
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-slate-500 text-sm">
-                      Total Laki-Laki
-                    </p>
-
-                    <h3 className="text-5xl font-bold text-blue-700 mt-3">
-                      {totalLaki}
-                    </h3>
-
-                  </div>
-
-                  <div className="text-6xl">
-                    👨
-                  </div>
-
-                </div>
-
-              </div>
-
-              <div className="bg-white rounded-[28px] p-8 shadow-lg border border-slate-200">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-slate-500 text-sm">
-                      Total Perempuan
-                    </p>
-
-                    <h3 className="text-5xl font-bold text-pink-600 mt-3">
-                      {totalPerempuan}
-                    </h3>
-
-                  </div>
-
-                  <div className="text-6xl">
-                    👩
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-            {/* REKAP WILAYAH */}
-            <div className="bg-white rounded-[32px] shadow-xl border border-slate-200 overflow-hidden">
-
-              <div className="px-8 py-6 border-b border-slate-200 bg-slate-50">
-
-                <h2 className="text-2xl font-bold text-slate-800">
-                  Rekap Asal Wilayah
-                </h2>
-
-                <p className="text-slate-500 mt-1 text-sm">
-                  Distribusi asal wilayah peserta
+                <p className="text-slate-500 text-sm">
+                  Total Pendaftar
                 </p>
 
+                <h3 className="text-5xl font-bold text-slate-800 mt-4">
+                  {totalPendaftar}
+                </h3>
+
               </div>
 
-              <div className="overflow-auto">
+              <div className="bg-gradient-to-br from-cyan-500 to-blue-700 rounded-[32px] p-7 shadow-xl text-white">
 
-                <table className="w-full">
+                <p className="text-cyan-100 text-sm">
+                  Sudah Aktivasi
+                </p>
 
-                  <thead className="bg-slate-100">
+                <h3 className="text-5xl font-bold mt-4">
+                  {totalSudahAktivasi}
+                </h3>
 
-                    <tr>
+              </div>
 
-                      <th className="px-6 py-4 text-left text-sm font-bold text-slate-600">
-                        No
-                      </th>
+              <div className="bg-gradient-to-br from-orange-400 to-red-600 rounded-[32px] p-7 shadow-xl text-white">
 
-                      <th className="px-6 py-4 text-left text-sm font-bold text-slate-600">
-                        Asal Wilayah
-                      </th>
+                <p className="text-orange-100 text-sm">
+                  Belum Aktivasi
+                </p>
 
-                      <th className="px-6 py-4 text-center text-sm font-bold text-slate-600">
-                        Jumlah
-                      </th>
+                <h3 className="text-5xl font-bold mt-4">
+                  {totalBelumAktivasi}
+                </h3>
 
-                    </tr>
+              </div>
 
-                  </thead>
+              <div className="bg-gradient-to-br from-pink-500 to-rose-700 rounded-[32px] p-7 shadow-xl text-white">
 
-                  <tbody>
+                <p className="text-pink-100 text-sm">
+                  Belum Revisi
+                </p>
 
-                    {wilayahMap.map((item: any, index) => (
+                <h3 className="text-5xl font-bold mt-4">
+                  {totalBelumRevisi}
+                </h3>
 
-                      <tr
-                        key={index}
-                        className="border-t border-slate-100 hover:bg-slate-50 transition-all"
-                      >
+              </div>
 
-                        <td className="px-6 py-4">
-                          {index + 1}
-                        </td>
+              <div className="bg-gradient-to-br from-violet-500 to-purple-700 rounded-[32px] p-7 shadow-xl text-white">
 
-                        <td className="px-6 py-4 font-semibold text-slate-700">
-                          {item[0]}
-                        </td>
+                <p className="text-violet-100 text-sm">
+                  Ajuan Baru
+                </p>
 
-                        <td className="px-6 py-4 text-center">
+                <h3 className="text-5xl font-bold mt-4">
+                  {totalAjuanBaru}
+                </h3>
 
-                          <span className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-bold">
-                            {item[1]}
-                          </span>
+              </div>
 
-                        </td>
+              <div className="bg-gradient-to-br from-slate-700 to-slate-900 rounded-[32px] p-7 shadow-xl text-white">
 
-                      </tr>
+                <p className="text-slate-300 text-sm">
+                  Selisih Kuota
+                </p>
 
-                    ))}
+                <h3 className="text-5xl font-bold mt-4">
 
-                  </tbody>
+                  {totalPendaftar > KUOTA
+                    ? `+${totalPendaftar - KUOTA}`
+                    : `-${KUOTA - totalPendaftar}`}
 
-                </table>
+                </h3>
 
               </div>
 
