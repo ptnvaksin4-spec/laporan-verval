@@ -397,7 +397,6 @@ export default function Home() {
         {menu === "dashboard" && (
 
           <>
-            {/* SEARCH */}
             <div className="bg-white rounded-[28px] shadow-xl border border-slate-200 p-4 md:p-6 mb-8">
 
               <div className="flex items-center gap-3">
@@ -420,7 +419,6 @@ export default function Home() {
 
             </div>
 
-            {/* EMPTY */}
             {filteredData.length === 0 && (
 
               <div className="bg-white rounded-[32px] border border-slate-200 shadow-md p-10 text-center">
@@ -441,7 +439,6 @@ export default function Home() {
 
             )}
 
-            {/* DATA */}
             {filteredData.length > 0 && (
 
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -512,94 +509,6 @@ export default function Home() {
 
         )}
 
-        {/* REKAP SEKOLAH */}
-        {menu === "sekolah" && (
-
-          <div className="bg-white rounded-[32px] border border-slate-200 shadow-xl overflow-hidden">
-
-            <div className="px-6 py-5 border-b border-slate-200 bg-slate-50">
-
-              <h2 className="text-2xl font-bold text-slate-800">
-                🏫 Rekap Sekolah
-              </h2>
-
-            </div>
-
-            <div className="overflow-auto">
-
-              <table className="w-full min-w-[700px]">
-
-                <thead className="bg-slate-100">
-
-                  <tr>
-
-                    <th className="px-6 py-4 text-left">
-                      No
-                    </th>
-
-                    <th className="px-6 py-4 text-left">
-                      Nama Sekolah
-                    </th>
-
-                    <th className="px-6 py-4 text-center">
-                      👨 Laki-Laki
-                    </th>
-
-                    <th className="px-6 py-4 text-center">
-                      👩 Perempuan
-                    </th>
-
-                    <th className="px-6 py-4 text-center">
-                      📋 Total
-                    </th>
-
-                  </tr>
-
-                </thead>
-
-                <tbody>
-
-                  {rekapSekolah.map((item: any, index) => (
-
-                    <tr
-                      key={index}
-                      className="border-t border-slate-100 hover:bg-slate-50"
-                    >
-
-                      <td className="px-6 py-4">
-                        {index + 1}
-                      </td>
-
-                      <td className="px-6 py-4 font-semibold">
-                        {item.nama}
-                      </td>
-
-                      <td className="px-6 py-4 text-center">
-                        {item.laki}
-                      </td>
-
-                      <td className="px-6 py-4 text-center">
-                        {item.perempuan}
-                      </td>
-
-                      <td className="px-6 py-4 text-center font-bold">
-                        {item.total}
-                      </td>
-
-                    </tr>
-
-                  ))}
-
-                </tbody>
-
-              </table>
-
-            </div>
-
-          </div>
-
-        )}
-
         {/* REKAP ADMIN */}
         {menu === "admin" && (
 
@@ -642,7 +551,6 @@ export default function Home() {
 
                     <div className="grid grid-cols-2 gap-6">
 
-                      {/* LAKI-LAKI */}
                       <div className="text-center">
 
                         <div className="text-5xl mb-3">
@@ -659,7 +567,6 @@ export default function Home() {
 
                       </div>
 
-                      {/* PEREMPUAN */}
                       <div className="text-center">
 
                         <div className="text-5xl mb-3">
@@ -685,7 +592,7 @@ export default function Home() {
                 {/* KANAN */}
                 <div className="flex justify-end">
 
-                  <div className="bg-white/10 backdrop-blur-md rounded-3xl px-6 py-5 border border-white/10 min-w-[180px] text-center">
+                  <div className="bg-white/10 backdrop-blur-md rounded-3xl px-6 py-5 border border-white/10 min-w-[220px] text-center">
 
                     <div className="text-4xl mb-2">
                       🎯
@@ -697,6 +604,18 @@ export default function Home() {
 
                     <div className="text-5xl font-bold mt-3">
                       {KUOTA}
+                    </div>
+
+                    <div className="mt-5 pt-4 border-t border-white/10">
+
+                      <div className="text-xs text-slate-300">
+                        🕒 Update Data
+                      </div>
+
+                      <div className="text-sm font-semibold mt-1">
+                        18 Mei 2026 • 19.00 WIB
+                      </div>
+
                     </div>
 
                   </div>
@@ -855,82 +774,6 @@ export default function Home() {
                   </div>
 
                 </div>
-
-              </div>
-
-            </div>
-
-            {/* REKAP WILAYAH */}
-            <div className="bg-white rounded-[32px] shadow-xl border border-slate-200 overflow-hidden">
-
-              <div className="px-8 py-6 border-b border-slate-200 bg-slate-50">
-
-                <h2 className="text-2xl font-bold text-slate-800">
-                  🌍 Rekap Asal Wilayah
-                </h2>
-
-                <p className="text-slate-500 mt-1 text-sm">
-                  Distribusi asal wilayah peserta
-                </p>
-
-              </div>
-
-              <div className="overflow-auto">
-
-                <table className="w-full">
-
-                  <thead className="bg-slate-100">
-
-                    <tr>
-
-                      <th className="px-6 py-4 text-left text-sm font-bold text-slate-600">
-                        No
-                      </th>
-
-                      <th className="px-6 py-4 text-left text-sm font-bold text-slate-600">
-                        Asal Wilayah
-                      </th>
-
-                      <th className="px-6 py-4 text-center text-sm font-bold text-slate-600">
-                        📊 Jumlah
-                      </th>
-
-                    </tr>
-
-                  </thead>
-
-                  <tbody>
-
-                    {wilayahMap.map((item: any, index) => (
-
-                      <tr
-                        key={index}
-                        className="border-t border-slate-100 hover:bg-slate-50"
-                      >
-
-                        <td className="px-6 py-4">
-                          {index + 1}
-                        </td>
-
-                        <td className="px-6 py-4 font-semibold">
-                          {item[0]}
-                        </td>
-
-                        <td className="px-6 py-4 text-center">
-
-                          <span className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-bold">
-                            {item[1]}
-                          </span>
-
-                        </td>
-
-                      </tr>
-
-                    ))}
-
-                  </tbody>
-
-                </table>
 
               </div>
 
