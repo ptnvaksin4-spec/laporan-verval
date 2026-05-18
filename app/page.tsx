@@ -589,12 +589,13 @@ export default function Home() {
 
           <div className="space-y-5">
 
+            {/* HEADER ADMIN */}
             <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 rounded-[28px] p-4 md:p-5 text-white shadow-xl">
 
-              <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px_320px] gap-5 items-stretch">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-center">
 
                 {/* KIRI */}
-                <div className="flex items-center">
+                <div>
 
                   <div className="flex items-center gap-3">
 
@@ -621,11 +622,11 @@ export default function Home() {
                 {/* TENGAH */}
                 <div className="flex justify-center">
 
-                  <div className="bg-white/10 backdrop-blur-md rounded-[22px] px-4 py-4 border border-white/10 w-full max-w-[320px] h-[220px] text-center flex flex-col justify-center">
+                  <div className="bg-white/10 backdrop-blur-md rounded-[22px] px-4 py-4 border border-white/10 w-full max-w-sm text-center min-h-[220px] flex flex-col justify-center">
 
                     <div className="grid grid-cols-2 gap-3">
 
-                      <div>
+                      <div className="text-center">
 
                         <div className="text-3xl mb-2">
                           👨
@@ -641,7 +642,7 @@ export default function Home() {
 
                       </div>
 
-                      <div>
+                      <div className="text-center">
 
                         <div className="text-3xl mb-2">
                           👩
@@ -663,7 +664,7 @@ export default function Home() {
 
                     <div className="grid grid-cols-2 gap-3">
 
-                      <div>
+                      <div className="text-center">
 
                         <div className="text-3xl mb-2">
                           📍
@@ -679,7 +680,7 @@ export default function Home() {
 
                       </div>
 
-                      <div>
+                      <div className="text-center">
 
                         <div className="text-3xl mb-2">
                           🌍
@@ -704,7 +705,7 @@ export default function Home() {
                 {/* KANAN */}
                 <div className="flex justify-center lg:justify-end">
 
-                  <div className="bg-white/10 backdrop-blur-md rounded-[22px] px-4 py-4 border border-white/10 w-full max-w-[320px] h-[220px] text-center flex flex-col justify-center">
+                  <div className="bg-white/10 backdrop-blur-md rounded-[22px] px-4 py-4 border border-white/10 w-full max-w-sm text-center min-h-[220px] flex flex-col justify-center">
 
                     <div className="text-3xl mb-2">
                       🎯
@@ -730,6 +731,159 @@ export default function Home() {
 
                     </div>
 
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* CARD STATISTIK ADMIN */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+
+              <div className="bg-white rounded-[26px] p-5 shadow-xl border border-slate-200">
+
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-slate-500 text-sm">
+                      📋 Total Pendaftar
+                    </p>
+
+                    <h3 className="text-3xl md:text-4xl font-bold text-slate-800 mt-4">
+                      {totalPendaftar}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-4xl">
+                    🧾
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div className="bg-gradient-to-br from-cyan-500 to-blue-700 rounded-[26px] p-5 shadow-xl text-white">
+
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-cyan-100 text-sm">
+                      ✅ Sudah Aktivasi
+                    </p>
+
+                    <h3 className="text-3xl md:text-4xl font-bold mt-4">
+                      {totalSudahAktivasi}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-4xl">
+                    🔓
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div className="bg-gradient-to-br from-orange-400 to-red-600 rounded-[26px] p-5 shadow-xl text-white">
+
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-orange-100 text-sm">
+                      ⏳ Belum Aktivasi
+                    </p>
+
+                    <h3 className="text-3xl md:text-4xl font-bold mt-4">
+                      {totalBelumAktivasi}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-4xl">
+                    🔒
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div className="bg-gradient-to-br from-pink-500 to-rose-700 rounded-[26px] p-5 shadow-xl text-white">
+
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-pink-100 text-sm">
+                      📝 Belum Revisi
+                    </p>
+
+                    <h3 className="text-3xl md:text-4xl font-bold mt-4">
+                      {totalBelumRevisi}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-4xl">
+                    📄
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div className="bg-gradient-to-br from-violet-500 to-purple-700 rounded-[26px] p-5 shadow-xl text-white">
+
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-violet-100 text-sm">
+                      🆕 Ajuan Baru
+                    </p>
+
+                    <h3 className="text-3xl md:text-4xl font-bold mt-4">
+                      {totalAjuanBaru}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-4xl">
+                    📥
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div className="bg-gradient-to-br from-slate-700 to-slate-900 rounded-[26px] p-5 shadow-xl text-white">
+
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-slate-300 text-sm">
+                      🎯 Selisih Kuota
+                    </p>
+
+                    <h3 className="text-3xl md:text-4xl font-bold mt-4">
+
+                      {totalPendaftar > KUOTA
+                        ? `+${totalPendaftar - KUOTA}`
+                        : `-${KUOTA - totalPendaftar}`}
+
+                    </h3>
+
+                  </div>
+
+                  <div className="text-4xl">
+                    📈
                   </div>
 
                 </div>
