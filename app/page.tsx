@@ -704,9 +704,9 @@ export default function Home() {
                 </div>
 
                 {/* KANAN */}
-                <div className="flex justify-end">
+                <div className="flex justify-center lg:justify-end">
 
-                  <div className="bg-white/10 backdrop-blur-md rounded-[24px] px-5 py-5 border border-white/10 min-w-[190px] text-center">
+                  <div className="bg-white/10 backdrop-blur-md rounded-[24px] px-5 py-5 border border-white/10 w-full max-w-md text-center">
 
                     <div className="text-3xl mb-2">
                       🎯
@@ -716,7 +716,7 @@ export default function Home() {
                       Total Kuota
                     </div>
 
-                    <div className="text-4xl font-bold mt-2">
+                    <div className="text-3xl md:text-4xl font-bold mt-2">
                       {KUOTA}
                     </div>
 
