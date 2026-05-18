@@ -622,9 +622,9 @@ export default function Home() {
                 {/* TENGAH */}
                 <div className="flex justify-center">
 
-                  <div className="bg-white/10 backdrop-blur-md rounded-[22px] px-4 py-4 border border-white/10 w-full max-w-sm">
+                  <div className="bg-white/10 backdrop-blur-md rounded-[22px] px-4 py-4 border border-white/10 w-full max-w-sm text-center min-h-[220px] flex flex-col justify-center">
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-3">
 
                       <div className="text-center">
 
@@ -662,7 +662,7 @@ export default function Home() {
 
                     <div className="my-4 border-t border-white/10"></div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-3">
 
                       <div className="text-center">
 
@@ -705,7 +705,7 @@ export default function Home() {
                 {/* KANAN */}
                 <div className="flex justify-center lg:justify-end">
 
-                  <div className="bg-white/10 backdrop-blur-md rounded-[22px] px-4 py-4 border border-white/10 w-full max-w-sm text-center">
+                  <div className="bg-white/10 backdrop-blur-md rounded-[22px] px-4 py-4 border border-white/10 w-full max-w-sm text-center min-h-[220px] flex flex-col justify-center">
 
                     <div className="text-3xl mb-2">
                       🎯
