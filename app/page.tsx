@@ -61,38 +61,45 @@ export default function Home() {
   // TOTAL DATA
   const totalPendaftar = data.length;
 
-  const totalSudahAktivasi = data.filter((item) =>
-    item["Status Aktivasi"]
-      ?.toLowerCase()
-      .includes("sudah")
-  ).length;
+  const totalSudahAktivasi = data.filter((item) => {
 
-  const totalBelumAktivasi = data.filter((item) =>
-    item["Status Aktivasi"]
-      ?.toLowerCase()
-      .includes("belum")
-  ).length;
+    const value = Object.values(item)
+      .join(" ")
+      .toLowerCase();
 
-  const totalSudahRevisi = data.filter(
-    (item) =>
-      item["Status Ajuan"]
-        ?.toLowerCase()
-        .trim() === "mengajukan revisi"
-  ).length;
+    return value.includes("sudah aktivasi");
 
-  const totalBelumRevisi = data.filter(
-    (item) =>
-      item["Status Ajuan"]
-        ?.toLowerCase()
-        .trim() === "belum mengajukan revisi"
-  ).length;
+  }).length;
 
-  const totalAjuanBaru = data.filter(
-    (item) =>
-      item["Status Ajuan"]
-        ?.toLowerCase()
-        .includes("ajuan baru")
-  ).length;
+  const totalBelumAktivasi = data.filter((item) => {
+
+    const value = Object.values(item)
+      .join(" ")
+      .toLowerCase();
+
+    return value.includes("belum aktivasi");
+
+  }).length;
+
+  const totalBelumRevisi = data.filter((item) => {
+
+    const value = Object.values(item)
+      .join(" ")
+      .toLowerCase();
+
+    return value.includes("belum mengajukan revisi");
+
+  }).length;
+
+  const totalAjuanBaru = data.filter((item) => {
+
+    const value = Object.values(item)
+      .join(" ")
+      .toLowerCase();
+
+    return value.includes("ajuan baru");
+
+  }).length;
 
   // TOTAL JENIS KELAMIN
   const totalLaki = data.filter((item) => {
@@ -128,8 +135,14 @@ export default function Home() {
 
     data.forEach((item) => {
 
-      const wilayah =
-        item["Asal Wilayah"] || "Tidak Diketahui";
+      const wilayahKey = Object.keys(item).find(
+        (key) =>
+          key.toLowerCase().includes("wilayah")
+      );
+
+      const wilayah = wilayahKey
+        ? item[wilayahKey]
+        : "Tidak Diketahui";
 
       if (!map.has(wilayah)) {
         map.set(wilayah, 0);
@@ -183,7 +196,6 @@ export default function Home() {
 
       const sekolah: any = sekolahMap.get(namaSekolah);
 
-      // LAKI-LAKI
       if (
         jenisKelamin === "l" ||
         jenisKelamin.includes("laki")
@@ -191,7 +203,6 @@ export default function Home() {
         sekolah.laki += 1;
       }
 
-      // PEREMPUAN
       if (
         jenisKelamin === "p" ||
         jenisKelamin.includes("perempuan")
@@ -348,7 +359,6 @@ export default function Home() {
         {menu === "dashboard" && (
 
           <>
-            {/* PESAN AWAL */}
             {filteredData.length === 0 && (
 
               <div className="bg-white rounded-[28px] border border-slate-200 shadow-md p-10 text-center">
@@ -369,7 +379,6 @@ export default function Home() {
 
             )}
 
-            {/* DATA PESERTA */}
             {filteredData.length > 0 && (
 
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -523,104 +532,243 @@ export default function Home() {
         {/* REKAP ADMIN */}
         {menu === "admin" && (
 
-          <div className="space-y-6">
+          <div className="space-y-8">
 
-            {/* KARTU STATISTIK */}
-            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+            {/* HEADER ADMIN */}
+            <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-[32px] p-8 text-white shadow-2xl">
 
-              <div className="bg-white rounded-3xl p-5 shadow-md border">
-                <div className="text-sm text-slate-500">
-                  Total Pendaftar
+              <h2 className="text-3xl md:text-4xl font-bold">
+                Rekap Admin
+              </h2>
+
+              <p className="text-slate-300 mt-2">
+                Statistik keseluruhan data Pra SMPB SMKN 1 Cipanas
+              </p>
+
+            </div>
+
+            {/* STATISTIK */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+              <div className="bg-white rounded-[28px] p-6 shadow-lg border border-slate-200">
+
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-sm text-slate-500">
+                      Total Pendaftar
+                    </p>
+
+                    <h3 className="text-4xl font-bold text-slate-800 mt-2">
+                      {totalPendaftar}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-5xl">
+                    📋
+                  </div>
+
                 </div>
-                <div className="text-3xl font-bold mt-2">
-                  {totalPendaftar}
-                </div>
+
               </div>
 
-              <div className="bg-cyan-50 rounded-3xl p-5 shadow-md border">
-                <div className="text-sm text-cyan-700">
-                  Sudah Aktivasi
+              <div className="bg-gradient-to-br from-cyan-500 to-blue-600 rounded-[28px] p-6 shadow-lg text-white">
+
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-sm text-cyan-100">
+                      Sudah Aktivasi
+                    </p>
+
+                    <h3 className="text-4xl font-bold mt-2">
+                      {totalSudahAktivasi}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-5xl">
+                    ✅
+                  </div>
+
                 </div>
-                <div className="text-3xl font-bold mt-2 text-cyan-700">
-                  {totalSudahAktivasi}
-                </div>
+
               </div>
 
-              <div className="bg-blue-50 rounded-3xl p-5 shadow-md border">
-                <div className="text-sm text-blue-700">
-                  Belum Aktivasi
+              <div className="bg-gradient-to-br from-orange-400 to-red-500 rounded-[28px] p-6 shadow-lg text-white">
+
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-sm text-orange-100">
+                      Belum Aktivasi
+                    </p>
+
+                    <h3 className="text-4xl font-bold mt-2">
+                      {totalBelumAktivasi}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-5xl">
+                    ⏳
+                  </div>
+
                 </div>
-                <div className="text-3xl font-bold mt-2 text-blue-700">
-                  {totalBelumAktivasi}
-                </div>
+
               </div>
 
-              <div className="bg-red-50 rounded-3xl p-5 shadow-md border">
-                <div className="text-sm text-red-700">
-                  Belum Revisi
+              <div className="bg-gradient-to-br from-pink-500 to-rose-600 rounded-[28px] p-6 shadow-lg text-white">
+
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-sm text-pink-100">
+                      Belum Revisi
+                    </p>
+
+                    <h3 className="text-4xl font-bold mt-2">
+                      {totalBelumRevisi}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-5xl">
+                    📝
+                  </div>
+
                 </div>
-                <div className="text-3xl font-bold mt-2 text-red-700">
-                  {totalBelumRevisi}
-                </div>
+
               </div>
 
-              <div className="bg-yellow-50 rounded-3xl p-5 shadow-md border">
-                <div className="text-sm text-yellow-700">
-                  Ajuan Baru
+              <div className="bg-gradient-to-br from-violet-500 to-purple-700 rounded-[28px] p-6 shadow-lg text-white">
+
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-sm text-violet-100">
+                      Ajuan Baru
+                    </p>
+
+                    <h3 className="text-4xl font-bold mt-2">
+                      {totalAjuanBaru}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-5xl">
+                    🆕
+                  </div>
+
                 </div>
-                <div className="text-3xl font-bold mt-2 text-yellow-700">
-                  {totalAjuanBaru}
-                </div>
+
               </div>
 
-              <div className="bg-indigo-50 rounded-3xl p-5 shadow-md border">
-                <div className="text-sm text-indigo-700">
-                  Laki-Laki
-                </div>
-                <div className="text-3xl font-bold mt-2 text-indigo-700">
-                  {totalLaki}
-                </div>
-              </div>
+              <div className="bg-gradient-to-br from-slate-700 to-slate-900 rounded-[28px] p-6 shadow-lg text-white">
 
-              <div className="bg-pink-50 rounded-3xl p-5 shadow-md border">
-                <div className="text-sm text-pink-700">
-                  Perempuan
-                </div>
-                <div className="text-3xl font-bold mt-2 text-pink-700">
-                  {totalPerempuan}
-                </div>
-              </div>
+                <div className="flex items-center justify-between">
 
-              <div className="bg-slate-100 rounded-3xl p-5 shadow-md border">
+                  <div>
 
-                <div className="text-sm text-slate-700">
-                  Kuota 288
-                </div>
+                    <p className="text-sm text-slate-300">
+                      Selisih Kuota
+                    </p>
 
-                <div className="text-2xl font-bold mt-2">
+                    <h3 className="text-4xl font-bold mt-2">
 
-                  {totalPendaftar > KUOTA
-                    ? `+${totalPendaftar - KUOTA}`
-                    : `-${KUOTA - totalPendaftar}`}
+                      {totalPendaftar > KUOTA
+                        ? `+${totalPendaftar - KUOTA}`
+                        : `-${KUOTA - totalPendaftar}`}
 
-                </div>
+                    </h3>
 
-                <div className="text-xs text-slate-500 mt-1">
-                  Selisih Kuota
+                    <p className="text-xs text-slate-400 mt-2">
+                      Kuota Maksimal {KUOTA}
+                    </p>
+
+                  </div>
+
+                  <div className="text-5xl">
+                    🎯
+                  </div>
+
                 </div>
 
               </div>
 
             </div>
 
-            {/* TABEL ASAL WILAYAH */}
-            <div className="bg-white rounded-[28px] border border-slate-200 shadow-xl overflow-hidden">
+            {/* JENIS KELAMIN */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-              <div className="px-6 py-5 border-b border-slate-200">
+              <div className="bg-white rounded-[28px] p-8 shadow-lg border border-slate-200">
 
-                <h2 className="text-xl font-bold text-slate-800">
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-slate-500 text-sm">
+                      Total Laki-Laki
+                    </p>
+
+                    <h3 className="text-5xl font-bold text-blue-700 mt-3">
+                      {totalLaki}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-6xl">
+                    👨
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div className="bg-white rounded-[28px] p-8 shadow-lg border border-slate-200">
+
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-slate-500 text-sm">
+                      Total Perempuan
+                    </p>
+
+                    <h3 className="text-5xl font-bold text-pink-600 mt-3">
+                      {totalPerempuan}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-6xl">
+                    👩
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* REKAP WILAYAH */}
+            <div className="bg-white rounded-[32px] shadow-xl border border-slate-200 overflow-hidden">
+
+              <div className="px-8 py-6 border-b border-slate-200 bg-slate-50">
+
+                <h2 className="text-2xl font-bold text-slate-800">
                   Rekap Asal Wilayah
                 </h2>
+
+                <p className="text-slate-500 mt-1 text-sm">
+                  Distribusi asal wilayah peserta
+                </p>
 
               </div>
 
@@ -632,15 +780,15 @@ export default function Home() {
 
                     <tr>
 
-                      <th className="px-6 py-4 text-left">
+                      <th className="px-6 py-4 text-left text-sm font-bold text-slate-600">
                         No
                       </th>
 
-                      <th className="px-6 py-4 text-left">
+                      <th className="px-6 py-4 text-left text-sm font-bold text-slate-600">
                         Asal Wilayah
                       </th>
 
-                      <th className="px-6 py-4 text-center">
+                      <th className="px-6 py-4 text-center text-sm font-bold text-slate-600">
                         Jumlah
                       </th>
 
@@ -654,19 +802,23 @@ export default function Home() {
 
                       <tr
                         key={index}
-                        className="border-t border-slate-100"
+                        className="border-t border-slate-100 hover:bg-slate-50 transition-all"
                       >
 
                         <td className="px-6 py-4">
                           {index + 1}
                         </td>
 
-                        <td className="px-6 py-4 font-semibold">
+                        <td className="px-6 py-4 font-semibold text-slate-700">
                           {item[0]}
                         </td>
 
-                        <td className="px-6 py-4 text-center font-bold">
-                          {item[1]}
+                        <td className="px-6 py-4 text-center">
+
+                          <span className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-bold">
+                            {item[1]}
+                          </span>
+
                         </td>
 
                       </tr>
