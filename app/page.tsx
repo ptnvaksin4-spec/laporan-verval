@@ -249,8 +249,7 @@ export default function Home() {
 
       }
 
-      const sekolah: any =
-        sekolahMap.get(namaSekolah);
+      const sekolah: any = sekolahMap.get(namaSekolah);
 
       if (
         jk === "l" ||
@@ -588,10 +587,10 @@ export default function Home() {
         {/* REKAP ADMIN */}
         {menu === "admin" && (
 
-          <div className="space-y-8">
+          <div className="space-y-5">
 
             {/* HEADER ADMIN */}
-            <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 rounded-[32px] p-5 md:p-7 text-white shadow-2xl">
+            <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 rounded-[28px] p-4 md:p-5 text-white shadow-xl">
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-center">
 
@@ -600,13 +599,13 @@ export default function Home() {
 
                   <div className="flex items-center gap-3">
 
-                    <div className="text-4xl">
+                    <div className="text-3xl">
                       📊
                     </div>
 
                     <div>
 
-                      <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+                      <h2 className="text-xl md:text-2xl font-bold tracking-tight">
                         Rekap Admin
                       </h2>
 
@@ -623,13 +622,13 @@ export default function Home() {
                 {/* TENGAH */}
                 <div className="flex justify-center">
 
-                  <div className="bg-white/10 backdrop-blur-md rounded-[24px] px-5 py-5 border border-white/10 w-full max-w-md">
+                  <div className="bg-white/10 backdrop-blur-md rounded-[22px] px-4 py-4 border border-white/10 w-full max-w-sm">
 
                     <div className="grid grid-cols-2 gap-4">
 
                       <div className="text-center">
 
-                        <div className="text-4xl mb-2">
+                        <div className="text-3xl mb-2">
                           👨
                         </div>
 
@@ -637,7 +636,7 @@ export default function Home() {
                           Laki-Laki
                         </div>
 
-                        <div className="text-3xl font-bold mt-2">
+                        <div className="text-2xl md:text-3xl font-bold mt-2">
                           {totalLaki}
                         </div>
 
@@ -645,7 +644,7 @@ export default function Home() {
 
                       <div className="text-center">
 
-                        <div className="text-4xl mb-2">
+                        <div className="text-3xl mb-2">
                           👩
                         </div>
 
@@ -653,7 +652,7 @@ export default function Home() {
                           Perempuan
                         </div>
 
-                        <div className="text-3xl font-bold mt-2">
+                        <div className="text-2xl md:text-3xl font-bold mt-2">
                           {totalPerempuan}
                         </div>
 
@@ -661,13 +660,13 @@ export default function Home() {
 
                     </div>
 
-                    <div className="my-5 border-t border-white/10"></div>
+                    <div className="my-4 border-t border-white/10"></div>
 
                     <div className="grid grid-cols-2 gap-4">
 
                       <div className="text-center">
 
-                        <div className="text-4xl mb-2">
+                        <div className="text-3xl mb-2">
                           📍
                         </div>
 
@@ -675,7 +674,7 @@ export default function Home() {
                           Banten
                         </div>
 
-                        <div className="text-3xl font-bold mt-2">
+                        <div className="text-2xl md:text-3xl font-bold mt-2">
                           {totalBanten}
                         </div>
 
@@ -683,7 +682,7 @@ export default function Home() {
 
                       <div className="text-center">
 
-                        <div className="text-4xl mb-2">
+                        <div className="text-3xl mb-2">
                           🌍
                         </div>
 
@@ -691,7 +690,7 @@ export default function Home() {
                           Luar Banten
                         </div>
 
-                        <div className="text-3xl font-bold mt-2">
+                        <div className="text-2xl md:text-3xl font-bold mt-2">
                           {totalLuarBanten}
                         </div>
 
@@ -706,7 +705,7 @@ export default function Home() {
                 {/* KANAN */}
                 <div className="flex justify-center lg:justify-end">
 
-                  <div className="bg-white/10 backdrop-blur-md rounded-[24px] px-5 py-5 border border-white/10 w-full max-w-md text-center">
+                  <div className="bg-white/10 backdrop-blur-md rounded-[22px] px-4 py-4 border border-white/10 w-full max-w-sm text-center">
 
                     <div className="text-3xl mb-2">
                       🎯
@@ -716,7 +715,7 @@ export default function Home() {
                       Total Kuota
                     </div>
 
-                    <div className="text-3xl md:text-4xl font-bold mt-2">
+                    <div className="text-2xl md:text-3xl font-bold mt-2">
                       {KUOTA}
                     </div>
 
@@ -741,9 +740,9 @@ export default function Home() {
             </div>
 
             {/* CARD STATISTIK ADMIN */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
 
-              <div className="bg-white rounded-[32px] p-7 shadow-xl border border-slate-200">
+              <div className="bg-white rounded-[26px] p-5 shadow-xl border border-slate-200">
 
                 <div className="flex items-center justify-between">
 
@@ -753,13 +752,13 @@ export default function Home() {
                       📋 Total Pendaftar
                     </p>
 
-                    <h3 className="text-5xl font-bold text-slate-800 mt-4">
+                    <h3 className="text-3xl md:text-4xl font-bold text-slate-800 mt-4">
                       {totalPendaftar}
                     </h3>
 
                   </div>
 
-                  <div className="text-5xl">
+                  <div className="text-4xl">
                     🧾
                   </div>
 
@@ -767,7 +766,7 @@ export default function Home() {
 
               </div>
 
-              <div className="bg-gradient-to-br from-cyan-500 to-blue-700 rounded-[32px] p-7 shadow-xl text-white">
+              <div className="bg-gradient-to-br from-cyan-500 to-blue-700 rounded-[26px] p-5 shadow-xl text-white">
 
                 <div className="flex items-center justify-between">
 
@@ -777,13 +776,13 @@ export default function Home() {
                       ✅ Sudah Aktivasi
                     </p>
 
-                    <h3 className="text-5xl font-bold mt-4">
+                    <h3 className="text-3xl md:text-4xl font-bold mt-4">
                       {totalSudahAktivasi}
                     </h3>
 
                   </div>
 
-                  <div className="text-5xl">
+                  <div className="text-4xl">
                     🔓
                   </div>
 
@@ -791,7 +790,7 @@ export default function Home() {
 
               </div>
 
-              <div className="bg-gradient-to-br from-orange-400 to-red-600 rounded-[32px] p-7 shadow-xl text-white">
+              <div className="bg-gradient-to-br from-orange-400 to-red-600 rounded-[26px] p-5 shadow-xl text-white">
 
                 <div className="flex items-center justify-between">
 
@@ -801,13 +800,13 @@ export default function Home() {
                       ⏳ Belum Aktivasi
                     </p>
 
-                    <h3 className="text-5xl font-bold mt-4">
+                    <h3 className="text-3xl md:text-4xl font-bold mt-4">
                       {totalBelumAktivasi}
                     </h3>
 
                   </div>
 
-                  <div className="text-5xl">
+                  <div className="text-4xl">
                     🔒
                   </div>
 
@@ -815,7 +814,7 @@ export default function Home() {
 
               </div>
 
-              <div className="bg-gradient-to-br from-pink-500 to-rose-700 rounded-[32px] p-7 shadow-xl text-white">
+              <div className="bg-gradient-to-br from-pink-500 to-rose-700 rounded-[26px] p-5 shadow-xl text-white">
 
                 <div className="flex items-center justify-between">
 
@@ -825,13 +824,13 @@ export default function Home() {
                       📝 Belum Revisi
                     </p>
 
-                    <h3 className="text-5xl font-bold mt-4">
+                    <h3 className="text-3xl md:text-4xl font-bold mt-4">
                       {totalBelumRevisi}
                     </h3>
 
                   </div>
 
-                  <div className="text-5xl">
+                  <div className="text-4xl">
                     📄
                   </div>
 
@@ -839,7 +838,7 @@ export default function Home() {
 
               </div>
 
-              <div className="bg-gradient-to-br from-violet-500 to-purple-700 rounded-[32px] p-7 shadow-xl text-white">
+              <div className="bg-gradient-to-br from-violet-500 to-purple-700 rounded-[26px] p-5 shadow-xl text-white">
 
                 <div className="flex items-center justify-between">
 
@@ -849,13 +848,13 @@ export default function Home() {
                       🆕 Ajuan Baru
                     </p>
 
-                    <h3 className="text-5xl font-bold mt-4">
+                    <h3 className="text-3xl md:text-4xl font-bold mt-4">
                       {totalAjuanBaru}
                     </h3>
 
                   </div>
 
-                  <div className="text-5xl">
+                  <div className="text-4xl">
                     📥
                   </div>
 
@@ -863,7 +862,7 @@ export default function Home() {
 
               </div>
 
-              <div className="bg-gradient-to-br from-slate-700 to-slate-900 rounded-[32px] p-7 shadow-xl text-white">
+              <div className="bg-gradient-to-br from-slate-700 to-slate-900 rounded-[26px] p-5 shadow-xl text-white">
 
                 <div className="flex items-center justify-between">
 
@@ -873,7 +872,7 @@ export default function Home() {
                       🎯 Selisih Kuota
                     </p>
 
-                    <h3 className="text-5xl font-bold mt-4">
+                    <h3 className="text-3xl md:text-4xl font-bold mt-4">
 
                       {totalPendaftar > KUOTA
                         ? `+${totalPendaftar - KUOTA}`
@@ -883,7 +882,7 @@ export default function Home() {
 
                   </div>
 
-                  <div className="text-5xl">
+                  <div className="text-4xl">
                     📈
                   </div>
 
