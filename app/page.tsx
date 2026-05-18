@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
 
 export default function Home() {
 
@@ -11,55 +9,60 @@ export default function Home() {
 
   const [menu, setMenu] = useState("dashboard");
 
-  const [unlockSekolah, setUnlockSekolah] =
-    useState(false);
-
-  const [unlockAdmin, setUnlockAdmin] =
-    useState(false);
+  const [unlockSekolah, setUnlockSekolah] = useState(false);
+  const [unlockAdmin, setUnlockAdmin] = useState(false);
 
   const KUOTA = 288;
 
   // =========================
-  // DOWNLOAD EXCEL
+  // DOWNLOAD CSV
   // =========================
 
-  const downloadExcel = (
-    dataExport: any[],
-    fileName: string
+  const downloadCSV = (
+    filename: string,
+    rows: any[]
   ) => {
 
-    const worksheet =
-      XLSX.utils.json_to_sheet(dataExport);
+    if (!rows.length) return;
 
-    const workbook =
-      XLSX.utils.book_new();
+    const headers = Object.keys(rows[0]);
 
-    XLSX.utils.book_append_sheet(
-      workbook,
-      worksheet,
-      "Data"
-    );
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((row) =>
+        headers
+          .map((field) =>
+            `"${String(row[field] ?? "").replace(/"/g, '""')}"`
+          )
+          .join(",")
+      ),
+    ].join("\n");
 
-    const excelBuffer = XLSX.write(
-      workbook,
+    const blob = new Blob(
+      [csvContent],
       {
-        bookType: "xlsx",
-        type: "array",
+        type: "text/csv;charset=utf-8;",
       }
     );
 
-    const fileData = new Blob(
-      [excelBuffer],
-      {
-        type:
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
-      }
+    const url =
+      window.URL.createObjectURL(blob);
+
+    const link =
+      document.createElement("a");
+
+    link.href = url;
+
+    link.setAttribute(
+      "download",
+      filename
     );
 
-    saveAs(
-      fileData,
-      `${fileName}.xlsx`
-    );
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
 
   };
 
@@ -80,24 +83,18 @@ export default function Home() {
 
         const headers = rows[0];
 
-        const result = rows
-          .slice(1)
-          .map((row) => {
+        const result = rows.slice(1).map((row) => {
 
-            const obj: any = {};
+          const obj: any = {};
 
-            headers.forEach(
-              (header, index) => {
-
-                obj[header.trim()] =
-                  row[index]?.trim() || "";
-
-              }
-            );
-
-            return obj;
-
+          headers.forEach((header, index) => {
+            obj[header.trim()] =
+              row[index]?.trim() || "";
           });
+
+          return obj;
+
+        });
 
         setData(result);
 
@@ -133,16 +130,13 @@ export default function Home() {
   const totalSudahAktivasi =
     data.filter((item) => {
 
-      const key =
-        Object.keys(item).find(
-          (k) =>
-            k.toLowerCase()
-              .includes("aktivasi")
-        );
+      const key = Object.keys(item).find(
+        (k) =>
+          k.toLowerCase().includes("aktivasi")
+      );
 
       const value = key
-        ? String(item[key])
-            .toLowerCase()
+        ? String(item[key]).toLowerCase()
         : "";
 
       return value.includes("sudah");
@@ -152,16 +146,13 @@ export default function Home() {
   const totalBelumAktivasi =
     data.filter((item) => {
 
-      const key =
-        Object.keys(item).find(
-          (k) =>
-            k.toLowerCase()
-              .includes("aktivasi")
-        );
+      const key = Object.keys(item).find(
+        (k) =>
+          k.toLowerCase().includes("aktivasi")
+      );
 
       const value = key
-        ? String(item[key])
-            .toLowerCase()
+        ? String(item[key]).toLowerCase()
         : "";
 
       return value.includes("belum");
@@ -171,16 +162,13 @@ export default function Home() {
   const totalBelumRevisi =
     data.filter((item) => {
 
-      const key =
-        Object.keys(item).find(
-          (k) =>
-            k.toLowerCase()
-              .includes("ajuan")
-        );
+      const key = Object.keys(item).find(
+        (k) =>
+          k.toLowerCase().includes("ajuan")
+      );
 
       const value = key
-        ? String(item[key])
-            .toLowerCase()
+        ? String(item[key]).toLowerCase()
         : "";
 
       return value.includes(
@@ -192,42 +180,34 @@ export default function Home() {
   const totalAjuanBaru =
     data.filter((item) => {
 
-      const key =
-        Object.keys(item).find(
-          (k) =>
-            k.toLowerCase()
-              .includes("ajuan")
-        );
+      const key = Object.keys(item).find(
+        (k) =>
+          k.toLowerCase().includes("ajuan")
+      );
 
       const value = key
-        ? String(item[key])
-            .toLowerCase()
+        ? String(item[key]).toLowerCase()
         : "";
 
-      return value.includes(
-        "ajuan baru"
-      );
+      return value.includes("ajuan baru");
 
     }).length;
 
   // =========================
-  // JK
+  // JENIS KELAMIN
   // =========================
 
   const totalLaki =
     data.filter((item) => {
 
-      const key =
-        Object.keys(item).find(
-          (k) =>
-            k.toLowerCase()
-              .includes("kelamin") ||
-            k.toLowerCase() === "jk"
-        );
+      const key = Object.keys(item).find(
+        (k) =>
+          k.toLowerCase().includes("kelamin") ||
+          k.toLowerCase() === "jk"
+      );
 
       const value = key
-        ? String(item[key])
-            .toLowerCase()
+        ? String(item[key]).toLowerCase()
         : "";
 
       return (
@@ -240,17 +220,14 @@ export default function Home() {
   const totalPerempuan =
     data.filter((item) => {
 
-      const key =
-        Object.keys(item).find(
-          (k) =>
-            k.toLowerCase()
-              .includes("kelamin") ||
-            k.toLowerCase() === "jk"
-        );
+      const key = Object.keys(item).find(
+        (k) =>
+          k.toLowerCase().includes("kelamin") ||
+          k.toLowerCase() === "jk"
+      );
 
       const value = key
-        ? String(item[key])
-            .toLowerCase()
+        ? String(item[key]).toLowerCase()
         : "";
 
       return (
@@ -267,12 +244,10 @@ export default function Home() {
   const totalBanten =
     data.filter((item) => {
 
-      const key =
-        Object.keys(item).find(
-          (k) =>
-            k.toLowerCase()
-              .includes("wilayah")
-        );
+      const key = Object.keys(item).find(
+        (k) =>
+          k.toLowerCase().includes("wilayah")
+      );
 
       const value = key
         ? String(item[key])
@@ -287,12 +262,10 @@ export default function Home() {
   const totalLuarBanten =
     data.filter((item) => {
 
-      const key =
-        Object.keys(item).find(
-          (k) =>
-            k.toLowerCase()
-              .includes("wilayah")
-        );
+      const key = Object.keys(item).find(
+        (k) =>
+          k.toLowerCase().includes("wilayah")
+      );
 
       const value = key
         ? String(item[key])
@@ -320,50 +293,37 @@ export default function Home() {
       const sekolahKey =
         Object.keys(item).find(
           (k) =>
-            k.toLowerCase()
-              .includes("sekolah")
+            k.toLowerCase().includes("sekolah")
         );
 
-      const namaSekolah =
-        sekolahKey
-          ? item[sekolahKey]
-          : "Tidak Diketahui";
+      const namaSekolah = sekolahKey
+        ? item[sekolahKey]
+        : "Tidak Diketahui";
 
       const jkKey =
         Object.keys(item).find(
           (k) =>
-            k.toLowerCase()
-              .includes("kelamin") ||
+            k.toLowerCase().includes("kelamin") ||
             k.toLowerCase() === "jk"
         );
 
       const jk = jkKey
-        ? String(item[jkKey])
-            .toLowerCase()
+        ? String(item[jkKey]).toLowerCase()
         : "";
 
-      if (
-        !sekolahMap.has(
-          namaSekolah
-        )
-      ) {
+      if (!sekolahMap.has(namaSekolah)) {
 
-        sekolahMap.set(
-          namaSekolah,
-          {
-            nama: namaSekolah,
-            laki: 0,
-            perempuan: 0,
-            total: 0,
-          }
-        );
+        sekolahMap.set(namaSekolah, {
+          nama: namaSekolah,
+          laki: 0,
+          perempuan: 0,
+          total: 0,
+        });
 
       }
 
       const sekolah: any =
-        sekolahMap.get(
-          namaSekolah
-        );
+        sekolahMap.get(namaSekolah);
 
       if (
         jk === "l" ||
@@ -396,65 +356,51 @@ export default function Home() {
   // LOCK MENU
   // =========================
 
-  const handleOpenSekolah =
-    () => {
+  const handleOpenSekolah = () => {
 
-      if (unlockSekolah) {
+    if (unlockSekolah) {
+      setMenu("sekolah");
+      return;
+    }
 
-        setMenu("sekolah");
-        return;
+    const kode =
+      prompt("Masukkan kode akses");
 
-      }
+    if (kode === "20607872") {
 
-      const kode =
-        prompt(
-          "Masukkan kode akses"
-        );
+      setUnlockSekolah(true);
+      setMenu("sekolah");
 
-      if (kode === "20607872") {
+    } else {
 
-        setUnlockSekolah(true);
-        setMenu("sekolah");
+      alert("Kode akses salah");
 
-      } else {
+    }
 
-        alert(
-          "Kode akses salah"
-        );
+  };
 
-      }
+  const handleOpenAdmin = () => {
 
-    };
+    if (unlockAdmin) {
+      setMenu("admin");
+      return;
+    }
 
-  const handleOpenAdmin =
-    () => {
+    const kode =
+      prompt("Masukkan kode admin");
 
-      if (unlockAdmin) {
+    if (kode === "999666") {
 
-        setMenu("admin");
-        return;
+      setUnlockAdmin(true);
+      setMenu("admin");
 
-      }
+    } else {
 
-      const kode =
-        prompt(
-          "Masukkan kode admin"
-        );
+      alert("Kode admin salah");
 
-      if (kode === "999666") {
+    }
 
-        setUnlockAdmin(true);
-        setMenu("admin");
-
-      } else {
-
-        alert(
-          "Kode admin salah"
-        );
-
-      }
-
-    };
+  };
 
   return (
     <main className="min-h-screen bg-slate-100">
@@ -464,7 +410,7 @@ export default function Home() {
         {/* HEADER */}
         <div className="bg-gradient-to-r from-blue-800 via-indigo-700 to-blue-600 rounded-[36px] shadow-2xl p-8 md:p-10 text-white mb-8">
 
-          <h1 className="text-3xl md:text-5xl font-bold">
+          <h1 className="text-3xl md:text-5xl font-bold tracking-tight">
             Pra SMPB SMKN 1 Cipanas
           </h1>
 
@@ -473,9 +419,7 @@ export default function Home() {
           </p>
 
           <p className="text-blue-200 mt-2 text-xs md:text-sm">
-            Update data:
-            18 Mei 2026 •
-            19.00 WIB
+            Update data: 18 Mei 2026 • 19.00 WIB
           </p>
 
         </div>
@@ -487,7 +431,7 @@ export default function Home() {
             onClick={() =>
               setMenu("dashboard")
             }
-            className={`px-5 py-3 rounded-2xl text-sm font-semibold ${
+            className={`px-5 py-3 rounded-2xl text-sm font-semibold transition-all ${
               menu === "dashboard"
                 ? "bg-blue-600 text-white"
                 : "bg-white text-slate-700 border border-slate-200"
@@ -497,10 +441,8 @@ export default function Home() {
           </button>
 
           <button
-            onClick={
-              handleOpenSekolah
-            }
-            className={`px-5 py-3 rounded-2xl text-sm font-semibold ${
+            onClick={handleOpenSekolah}
+            className={`px-5 py-3 rounded-2xl text-sm font-semibold transition-all ${
               menu === "sekolah"
                 ? "bg-blue-600 text-white"
                 : "bg-white text-slate-700 border border-slate-200"
@@ -510,10 +452,8 @@ export default function Home() {
           </button>
 
           <button
-            onClick={
-              handleOpenAdmin
-            }
-            className={`px-5 py-3 rounded-2xl text-sm font-semibold ${
+            onClick={handleOpenAdmin}
+            className={`px-5 py-3 rounded-2xl text-sm font-semibold transition-all ${
               menu === "admin"
                 ? "bg-blue-600 text-white"
                 : "bg-white text-slate-700 border border-slate-200"
@@ -525,51 +465,61 @@ export default function Home() {
         </div>
 
         {/* DASHBOARD */}
-        {menu ===
-          "dashboard" && (
+        {menu === "dashboard" && (
           <>
-
             <div className="bg-white rounded-[28px] shadow-xl border border-slate-200 p-4 md:p-6 mb-8">
 
               <div className="flex items-center gap-3">
 
-                <div className="text-xl">
+                <div className="text-slate-500 text-xl">
                   🔍
                 </div>
 
                 <input
                   type="text"
-                  placeholder="Cari Nama, NISN, atau Sekolah"
+                  placeholder="Cari berdasarkan Nama, NISN, atau Sekolah"
                   value={search}
                   onChange={(e) =>
                     setSearch(
                       e.target.value
                     )
                   }
-                  className="w-full outline-none text-black"
+                  className="w-full text-black text-sm md:text-base outline-none"
                 />
 
               </div>
 
             </div>
 
-            {filteredData.length >
-              0 && (
+            {filteredData.length === 0 && (
+
+              <div className="bg-white rounded-[32px] border border-slate-200 shadow-md p-10 text-center">
+
+                <div className="text-6xl mb-5">
+                  🔎
+                </div>
+
+                <h2 className="text-2xl font-bold text-slate-700">
+                  Cari Data Peserta
+                </h2>
+
+              </div>
+
+            )}
+
+            {filteredData.length > 0 && (
 
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
                 {filteredData.map(
-                  (
-                    item,
-                    index
-                  ) => (
+                  (item, index) => (
 
                     <div
                       key={index}
-                      className="bg-white rounded-[28px] border border-slate-200 shadow-md overflow-hidden"
+                      className="bg-white rounded-[28px] border border-slate-200 shadow-md overflow-hidden hover:shadow-2xl transition-all duration-300"
                     >
 
-                      <div className="bg-slate-100 px-5 py-4 flex justify-between">
+                      <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-5 py-4 border-b border-slate-200 flex items-center justify-between">
 
                         <div>
 
@@ -584,53 +534,37 @@ export default function Home() {
                         </div>
 
                         <div className="bg-blue-600 text-white text-xs px-3 py-1 rounded-full">
-                          #
-                          {index + 1}
+                          #{index + 1}
                         </div>
 
                       </div>
 
                       <div className="p-5">
 
-                        {Object.entries(
-                          item
-                        )
+                        {Object.entries(item)
                           .filter(
-                            (
-                              [key]
-                            ) =>
+                            ([key]) =>
                               !key
                                 .toLowerCase()
-                                .includes(
-                                  "waktu"
-                                )
+                                .includes("waktu")
                           )
                           .map(
                             (
-                              [
-                                key,
-                                value,
-                              ],
+                              [key, value],
                               i
                             ) => (
 
                               <div
-                                key={
-                                  i
-                                }
-                                className="py-3 border-b border-slate-100"
+                                key={i}
+                                className="py-3 border-b border-slate-100 last:border-b-0"
                               >
 
-                                <div className="text-[11px] uppercase font-bold text-slate-400 mb-1">
-                                  {
-                                    key
-                                  }
+                                <div className="text-[11px] uppercase tracking-wider font-bold text-slate-400 mb-1">
+                                  {key}
                                 </div>
 
-                                <div className="text-sm font-semibold text-slate-800 break-words">
-                                  {String(
-                                    value
-                                  )}
+                                <div className="text-sm md:text-base text-slate-800 font-semibold break-words">
+                                  {String(value)}
                                 </div>
 
                               </div>
@@ -648,32 +582,38 @@ export default function Home() {
               </div>
 
             )}
-
           </>
         )}
 
         {/* REKAP SEKOLAH */}
-        {menu ===
-          "sekolah" && (
+        {menu === "sekolah" && (
 
-          <div className="bg-white rounded-[32px] shadow-xl overflow-hidden">
+          <div className="bg-white rounded-[32px] border border-slate-200 shadow-xl overflow-hidden">
 
-            <div className="px-6 py-5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+            <div className="px-6 py-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between gap-4 flex-wrap">
 
-              <h2 className="text-2xl font-bold text-slate-800">
-                🏫 Rekap Sekolah
-              </h2>
+              <div>
+
+                <h2 className="text-2xl font-bold text-slate-800">
+                  🏫 Rekap Sekolah
+                </h2>
+
+                <p className="text-sm text-slate-500 mt-1">
+                  Statistik jumlah peserta masing-masing sekolah
+                </p>
+
+              </div>
 
               <button
                 onClick={() =>
-                  downloadExcel(
-                    rekapSekolah,
-                    "rekap-sekolah"
+                  downloadCSV(
+                    "rekap-sekolah.csv",
+                    rekapSekolah
                   )
                 }
-                className="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-2xl text-sm font-semibold"
+                className="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-2xl text-sm font-semibold transition-all"
               >
-                ⬇️ Download
+                ⬇️ Download Rekap Sekolah
               </button>
 
             </div>
@@ -695,11 +635,11 @@ export default function Home() {
                     </th>
 
                     <th className="px-6 py-4 text-center">
-                      👨 L
+                      👨 Laki-Laki
                     </th>
 
                     <th className="px-6 py-4 text-center">
-                      👩 P
+                      👩 Perempuan
                     </th>
 
                     <th className="px-6 py-4 text-center">
@@ -719,10 +659,8 @@ export default function Home() {
                     ) => (
 
                       <tr
-                        key={
-                          index
-                        }
-                        className="border-t border-slate-100"
+                        key={index}
+                        className="border-t border-slate-100 hover:bg-slate-50"
                       >
 
                         <td className="px-6 py-4">
@@ -730,27 +668,19 @@ export default function Home() {
                         </td>
 
                         <td className="px-6 py-4 font-semibold">
-                          {
-                            item.nama
-                          }
+                          {item.nama}
                         </td>
 
                         <td className="px-6 py-4 text-center">
-                          {
-                            item.laki
-                          }
+                          {item.laki}
                         </td>
 
                         <td className="px-6 py-4 text-center">
-                          {
-                            item.perempuan
-                          }
+                          {item.perempuan}
                         </td>
 
                         <td className="px-6 py-4 text-center font-bold">
-                          {
-                            item.total
-                          }
+                          {item.total}
                         </td>
 
                       </tr>
@@ -769,114 +699,283 @@ export default function Home() {
         )}
 
         {/* REKAP ADMIN */}
-        {menu ===
-          "admin" && (
+        {menu === "admin" && (
 
           <div className="space-y-8">
 
+            {/* HEADER ADMIN */}
+            <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 rounded-[32px] p-5 md:p-7 text-white shadow-2xl">
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-center">
+
+                <div>
+
+                  <div className="flex items-center gap-3">
+
+                    <div className="text-4xl">
+                      📊
+                    </div>
+
+                    <div>
+
+                      <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+                        Rekap Admin
+                      </h2>
+
+                      <p className="text-slate-300 mt-1 text-xs md:text-sm">
+                        Statistik keseluruhan data Pra SMPB SMKN 1 Cipanas
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+                <div className="flex justify-center">
+
+                  <div className="bg-white/10 backdrop-blur-md rounded-[24px] px-5 py-5 border border-white/10 w-full max-w-md">
+
+                    <div className="grid grid-cols-2 gap-4">
+
+                      <div className="text-center">
+
+                        <div className="text-4xl mb-2">
+                          👨
+                        </div>
+
+                        <div className="text-xs text-slate-300">
+                          Laki-Laki
+                        </div>
+
+                        <div className="text-3xl font-bold mt-2">
+                          {totalLaki}
+                        </div>
+
+                      </div>
+
+                      <div className="text-center">
+
+                        <div className="text-4xl mb-2">
+                          👩
+                        </div>
+
+                        <div className="text-xs text-slate-300">
+                          Perempuan
+                        </div>
+
+                        <div className="text-3xl font-bold mt-2">
+                          {totalPerempuan}
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                    <div className="my-5 border-t border-white/10"></div>
+
+                    <div className="grid grid-cols-2 gap-4">
+
+                      <div className="text-center">
+
+                        <div className="text-4xl mb-2">
+                          📍
+                        </div>
+
+                        <div className="text-xs text-slate-300">
+                          Banten
+                        </div>
+
+                        <div className="text-3xl font-bold mt-2">
+                          {totalBanten}
+                        </div>
+
+                      </div>
+
+                      <div className="text-center">
+
+                        <div className="text-4xl mb-2">
+                          🌍
+                        </div>
+
+                        <div className="text-xs text-slate-300">
+                          Luar Banten
+                        </div>
+
+                        <div className="text-3xl font-bold mt-2">
+                          {totalLuarBanten}
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+                <div className="flex justify-end">
+
+                  <div className="bg-white/10 backdrop-blur-md rounded-[24px] px-5 py-5 border border-white/10 min-w-[190px] text-center">
+
+                    <div className="text-3xl mb-2">
+                      🎯
+                    </div>
+
+                    <div className="text-xs text-slate-300">
+                      Total Kuota
+                    </div>
+
+                    <div className="text-4xl font-bold mt-2">
+                      {KUOTA}
+                    </div>
+
+                    <div className="mt-4 pt-3 border-t border-white/10">
+
+                      <div className="text-[11px] text-slate-300">
+                        🕒 Update Data
+                      </div>
+
+                      <div className="text-xs font-semibold mt-1">
+                        18 Mei 2026 • 19.00 WIB
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* DOWNLOAD ADMIN */}
             <div className="flex justify-end">
 
               <button
                 onClick={() =>
-                  downloadExcel(
+                  downloadCSV(
+                    "rekap-admin.csv",
                     [
                       {
-                        "Total Pendaftar":
+                        total_pendaftar:
                           totalPendaftar,
-                        "Sudah Aktivasi":
+
+                        sudah_aktivasi:
                           totalSudahAktivasi,
-                        "Belum Aktivasi":
+
+                        belum_aktivasi:
                           totalBelumAktivasi,
-                        "Belum Revisi":
+
+                        belum_revisi:
                           totalBelumRevisi,
-                        "Ajuan Baru":
+
+                        ajuan_baru:
                           totalAjuanBaru,
-                        "Laki-Laki":
+
+                        laki_laki:
                           totalLaki,
-                        "Perempuan":
+
+                        perempuan:
                           totalPerempuan,
-                        Banten:
+
+                        banten:
                           totalBanten,
-                        "Luar Banten":
+
+                        luar_banten:
                           totalLuarBanten,
-                        Kuota:
+
+                        kuota:
+                          KUOTA,
+
+                        selisih_kuota:
+                          totalPendaftar -
                           KUOTA,
                       },
-                    ],
-                    "rekap-admin"
+                    ]
                   )
                 }
-                className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl text-sm font-semibold"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl text-sm font-semibold shadow-lg transition-all"
               >
-                ⬇️ Download Rekap
+                ⬇️ Download Rekap Admin
               </button>
 
             </div>
 
-            {/* CARD */}
+            {/* CARD ADMIN */}
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
 
-              <div className="bg-white rounded-[32px] p-7 shadow-xl">
-                <p className="text-sm text-slate-500">
+              <div className="bg-white rounded-[32px] p-7 shadow-xl border border-slate-200">
+                <p className="text-slate-500 text-sm">
                   📋 Total Pendaftar
                 </p>
-                <h3 className="text-5xl font-bold mt-4">
+
+                <h3 className="text-5xl font-bold text-slate-800 mt-4">
                   {totalPendaftar}
                 </h3>
               </div>
 
-              <div className="bg-cyan-600 text-white rounded-[32px] p-7 shadow-xl">
-                <p className="text-sm">
+              <div className="bg-gradient-to-br from-cyan-500 to-blue-700 rounded-[32px] p-7 shadow-xl text-white">
+                <p className="text-cyan-100 text-sm">
                   ✅ Sudah Aktivasi
                 </p>
+
                 <h3 className="text-5xl font-bold mt-4">
-                  {
-                    totalSudahAktivasi
-                  }
+                  {totalSudahAktivasi}
                 </h3>
               </div>
 
-              <div className="bg-orange-500 text-white rounded-[32px] p-7 shadow-xl">
-                <p className="text-sm">
+              <div className="bg-gradient-to-br from-orange-400 to-red-600 rounded-[32px] p-7 shadow-xl text-white">
+                <p className="text-orange-100 text-sm">
                   ⏳ Belum Aktivasi
                 </p>
+
                 <h3 className="text-5xl font-bold mt-4">
-                  {
-                    totalBelumAktivasi
-                  }
+                  {totalBelumAktivasi}
                 </h3>
               </div>
 
-              <div className="bg-pink-600 text-white rounded-[32px] p-7 shadow-xl">
-                <p className="text-sm">
+              <div className="bg-gradient-to-br from-pink-500 to-rose-700 rounded-[32px] p-7 shadow-xl text-white">
+                <p className="text-pink-100 text-sm">
                   📝 Belum Revisi
                 </p>
+
                 <h3 className="text-5xl font-bold mt-4">
-                  {
-                    totalBelumRevisi
-                  }
+                  {totalBelumRevisi}
                 </h3>
               </div>
 
-              <div className="bg-violet-600 text-white rounded-[32px] p-7 shadow-xl">
-                <p className="text-sm">
+              <div className="bg-gradient-to-br from-violet-500 to-purple-700 rounded-[32px] p-7 shadow-xl text-white">
+                <p className="text-violet-100 text-sm">
                   🆕 Ajuan Baru
                 </p>
+
                 <h3 className="text-5xl font-bold mt-4">
-                  {
-                    totalAjuanBaru
-                  }
+                  {totalAjuanBaru}
                 </h3>
               </div>
 
-              <div className="bg-slate-800 text-white rounded-[32px] p-7 shadow-xl">
-                <p className="text-sm">
+              <div className="bg-gradient-to-br from-slate-700 to-slate-900 rounded-[32px] p-7 shadow-xl text-white">
+                <p className="text-slate-300 text-sm">
                   🎯 Selisih Kuota
                 </p>
+
                 <h3 className="text-5xl font-bold mt-4">
-                  {totalPendaftar -
-                    KUOTA}
+
+                  {totalPendaftar >
+                  KUOTA
+                    ? `+${
+                        totalPendaftar -
+                        KUOTA
+                      }`
+                    : `-${
+                        KUOTA -
+                        totalPendaftar
+                      }`}
+
                 </h3>
+
               </div>
 
             </div>
