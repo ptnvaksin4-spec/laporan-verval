@@ -16,7 +16,10 @@ export default function Home() {
   // KUOTA
   const KUOTA = 288;
 
+  // =========================
   // LOAD CSV
+  // =========================
+
   useEffect(() => {
 
     fetch("/laporan.csv")
@@ -48,7 +51,10 @@ export default function Home() {
 
   }, []);
 
+  // =========================
   // FILTER SEARCH
+  // =========================
+
   const filteredData = useMemo(() => {
 
     if (!search.trim()) return [];
@@ -444,7 +450,7 @@ export default function Home() {
 
                   <div
                     key={index}
-                    className="bg-white rounded-[28px] border border-slate-200 shadow-md overflow-hidden"
+                    className="bg-white rounded-[28px] border border-slate-200 shadow-md overflow-hidden hover:shadow-2xl transition-all duration-300"
                   >
 
                     <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-5 py-4 border-b border-slate-200 flex items-center justify-between">
@@ -452,7 +458,7 @@ export default function Home() {
                       <div>
 
                         <div className="text-sm font-bold text-blue-700">
-                          Data Peserta
+                          📄 Data Peserta
                         </div>
 
                         <div className="text-xs text-slate-500 mt-1">
@@ -514,7 +520,7 @@ export default function Home() {
             <div className="px-6 py-5 border-b border-slate-200 bg-slate-50">
 
               <h2 className="text-2xl font-bold text-slate-800">
-                Rekap Sekolah
+                🏫 Rekap Sekolah
               </h2>
 
             </div>
@@ -536,15 +542,15 @@ export default function Home() {
                     </th>
 
                     <th className="px-6 py-4 text-center">
-                      Laki-Laki
+                      👨 Laki-Laki
                     </th>
 
                     <th className="px-6 py-4 text-center">
-                      Perempuan
+                      👩 Perempuan
                     </th>
 
                     <th className="px-6 py-4 text-center">
-                      Total
+                      📋 Total
                     </th>
 
                   </tr>
@@ -602,28 +608,97 @@ export default function Home() {
             {/* HEADER ADMIN */}
             <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 rounded-[36px] p-8 md:p-10 text-white shadow-2xl">
 
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
 
+                {/* KIRI */}
                 <div>
 
-                  <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-                    Rekap Admin
-                  </h2>
+                  <div className="flex items-center gap-3">
 
-                  <p className="text-slate-300 mt-3 text-sm md:text-base">
-                    Statistik keseluruhan data Pra SMPB SMKN 1 Cipanas
-                  </p>
+                    <div className="text-5xl">
+                      📊
+                    </div>
+
+                    <div>
+
+                      <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
+                        Rekap Admin
+                      </h2>
+
+                      <p className="text-slate-300 mt-2 text-sm md:text-base">
+                        Statistik keseluruhan data Pra SMPB SMKN 1 Cipanas
+                      </p>
+
+                    </div>
+
+                  </div>
 
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-md rounded-3xl px-6 py-5 border border-white/10">
+                {/* TENGAH */}
+                <div className="flex justify-center">
 
-                  <div className="text-sm text-slate-300">
-                    Total Kuota
+                  <div className="bg-white/10 backdrop-blur-md rounded-[28px] px-8 py-6 border border-white/10 w-full max-w-md">
+
+                    <div className="grid grid-cols-2 gap-6">
+
+                      {/* LAKI-LAKI */}
+                      <div className="text-center">
+
+                        <div className="text-5xl mb-3">
+                          👨
+                        </div>
+
+                        <div className="text-sm text-slate-300">
+                          Laki-Laki
+                        </div>
+
+                        <div className="text-4xl font-bold mt-2">
+                          {totalLaki}
+                        </div>
+
+                      </div>
+
+                      {/* PEREMPUAN */}
+                      <div className="text-center">
+
+                        <div className="text-5xl mb-3">
+                          👩
+                        </div>
+
+                        <div className="text-sm text-slate-300">
+                          Perempuan
+                        </div>
+
+                        <div className="text-4xl font-bold mt-2">
+                          {totalPerempuan}
+                        </div>
+
+                      </div>
+
+                    </div>
+
                   </div>
 
-                  <div className="text-4xl font-bold mt-2">
-                    {KUOTA}
+                </div>
+
+                {/* KANAN */}
+                <div className="flex justify-end">
+
+                  <div className="bg-white/10 backdrop-blur-md rounded-3xl px-6 py-5 border border-white/10 min-w-[180px] text-center">
+
+                    <div className="text-4xl mb-2">
+                      🎯
+                    </div>
+
+                    <div className="text-sm text-slate-300">
+                      Total Kuota
+                    </div>
+
+                    <div className="text-5xl font-bold mt-3">
+                      {KUOTA}
+                    </div>
+
                   </div>
 
                 </div>
@@ -637,77 +712,225 @@ export default function Home() {
 
               <div className="bg-white rounded-[32px] p-7 shadow-xl border border-slate-200">
 
-                <p className="text-slate-500 text-sm">
-                  Total Pendaftar
-                </p>
+                <div className="flex items-center justify-between">
 
-                <h3 className="text-5xl font-bold text-slate-800 mt-4">
-                  {totalPendaftar}
-                </h3>
+                  <div>
+
+                    <p className="text-slate-500 text-sm">
+                      📋 Total Pendaftar
+                    </p>
+
+                    <h3 className="text-5xl font-bold text-slate-800 mt-4">
+                      {totalPendaftar}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-5xl">
+                    🧾
+                  </div>
+
+                </div>
 
               </div>
 
               <div className="bg-gradient-to-br from-cyan-500 to-blue-700 rounded-[32px] p-7 shadow-xl text-white">
 
-                <p className="text-cyan-100 text-sm">
-                  Sudah Aktivasi
-                </p>
+                <div className="flex items-center justify-between">
 
-                <h3 className="text-5xl font-bold mt-4">
-                  {totalSudahAktivasi}
-                </h3>
+                  <div>
+
+                    <p className="text-cyan-100 text-sm">
+                      ✅ Sudah Aktivasi
+                    </p>
+
+                    <h3 className="text-5xl font-bold mt-4">
+                      {totalSudahAktivasi}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-5xl">
+                    🔓
+                  </div>
+
+                </div>
 
               </div>
 
               <div className="bg-gradient-to-br from-orange-400 to-red-600 rounded-[32px] p-7 shadow-xl text-white">
 
-                <p className="text-orange-100 text-sm">
-                  Belum Aktivasi
-                </p>
+                <div className="flex items-center justify-between">
 
-                <h3 className="text-5xl font-bold mt-4">
-                  {totalBelumAktivasi}
-                </h3>
+                  <div>
+
+                    <p className="text-orange-100 text-sm">
+                      ⏳ Belum Aktivasi
+                    </p>
+
+                    <h3 className="text-5xl font-bold mt-4">
+                      {totalBelumAktivasi}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-5xl">
+                    🔒
+                  </div>
+
+                </div>
 
               </div>
 
               <div className="bg-gradient-to-br from-pink-500 to-rose-700 rounded-[32px] p-7 shadow-xl text-white">
 
-                <p className="text-pink-100 text-sm">
-                  Belum Revisi
-                </p>
+                <div className="flex items-center justify-between">
 
-                <h3 className="text-5xl font-bold mt-4">
-                  {totalBelumRevisi}
-                </h3>
+                  <div>
+
+                    <p className="text-pink-100 text-sm">
+                      📝 Belum Revisi
+                    </p>
+
+                    <h3 className="text-5xl font-bold mt-4">
+                      {totalBelumRevisi}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-5xl">
+                    📄
+                  </div>
+
+                </div>
 
               </div>
 
               <div className="bg-gradient-to-br from-violet-500 to-purple-700 rounded-[32px] p-7 shadow-xl text-white">
 
-                <p className="text-violet-100 text-sm">
-                  Ajuan Baru
-                </p>
+                <div className="flex items-center justify-between">
 
-                <h3 className="text-5xl font-bold mt-4">
-                  {totalAjuanBaru}
-                </h3>
+                  <div>
+
+                    <p className="text-violet-100 text-sm">
+                      🆕 Ajuan Baru
+                    </p>
+
+                    <h3 className="text-5xl font-bold mt-4">
+                      {totalAjuanBaru}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-5xl">
+                    📥
+                  </div>
+
+                </div>
 
               </div>
 
               <div className="bg-gradient-to-br from-slate-700 to-slate-900 rounded-[32px] p-7 shadow-xl text-white">
 
-                <p className="text-slate-300 text-sm">
-                  Selisih Kuota
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-slate-300 text-sm">
+                      🎯 Selisih Kuota
+                    </p>
+
+                    <h3 className="text-5xl font-bold mt-4">
+
+                      {totalPendaftar > KUOTA
+                        ? `+${totalPendaftar - KUOTA}`
+                        : `-${KUOTA - totalPendaftar}`}
+
+                    </h3>
+
+                  </div>
+
+                  <div className="text-5xl">
+                    📈
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* REKAP WILAYAH */}
+            <div className="bg-white rounded-[32px] shadow-xl border border-slate-200 overflow-hidden">
+
+              <div className="px-8 py-6 border-b border-slate-200 bg-slate-50">
+
+                <h2 className="text-2xl font-bold text-slate-800">
+                  🌍 Rekap Asal Wilayah
+                </h2>
+
+                <p className="text-slate-500 mt-1 text-sm">
+                  Distribusi asal wilayah peserta
                 </p>
 
-                <h3 className="text-5xl font-bold mt-4">
+              </div>
 
-                  {totalPendaftar > KUOTA
-                    ? `+${totalPendaftar - KUOTA}`
-                    : `-${KUOTA - totalPendaftar}`}
+              <div className="overflow-auto">
 
-                </h3>
+                <table className="w-full">
+
+                  <thead className="bg-slate-100">
+
+                    <tr>
+
+                      <th className="px-6 py-4 text-left text-sm font-bold text-slate-600">
+                        No
+                      </th>
+
+                      <th className="px-6 py-4 text-left text-sm font-bold text-slate-600">
+                        Asal Wilayah
+                      </th>
+
+                      <th className="px-6 py-4 text-center text-sm font-bold text-slate-600">
+                        📊 Jumlah
+                      </th>
+
+                    </tr>
+
+                  </thead>
+
+                  <tbody>
+
+                    {wilayahMap.map((item: any, index) => (
+
+                      <tr
+                        key={index}
+                        className="border-t border-slate-100 hover:bg-slate-50"
+                      >
+
+                        <td className="px-6 py-4">
+                          {index + 1}
+                        </td>
+
+                        <td className="px-6 py-4 font-semibold">
+                          {item[0]}
+                        </td>
+
+                        <td className="px-6 py-4 text-center">
+
+                          <span className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-bold">
+                            {item[1]}
+                          </span>
+
+                        </td>
+
+                      </tr>
+
+                    ))}
+
+                  </tbody>
+
+                </table>
 
               </div>
 
