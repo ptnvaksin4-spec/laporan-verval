@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 export default function Home() {
 
@@ -13,6 +15,50 @@ export default function Home() {
   const [unlockAdmin, setUnlockAdmin] = useState(false);
 
   const KUOTA = 288;
+
+  // =========================
+  // DOWNLOAD EXCEL
+  // =========================
+
+  const downloadExcel = (
+    dataExport: any[],
+    fileName: string
+  ) => {
+
+    const worksheet =
+      XLSX.utils.json_to_sheet(dataExport);
+
+    const workbook =
+      XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      "Data"
+    );
+
+    const excelBuffer = XLSX.write(
+      workbook,
+      {
+        bookType: "xlsx",
+        type: "array",
+      }
+    );
+
+    const fileData = new Blob(
+      [excelBuffer],
+      {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
+      }
+    );
+
+    saveAs(
+      fileData,
+      `${fileName}.xlsx`
+    );
+
+  };
 
   // =========================
   // LOAD CSV
@@ -387,7 +433,6 @@ export default function Home() {
 
         {/* DASHBOARD */}
         {menu === "dashboard" && (
-
           <>
             <div className="bg-white rounded-[28px] shadow-xl border border-slate-200 p-4 md:p-6 mb-8">
 
@@ -493,8 +538,8 @@ export default function Home() {
               </div>
 
             )}
-          </>
 
+          </>
         )}
 
         {/* REKAP SEKOLAH */}
@@ -502,11 +547,23 @@ export default function Home() {
 
           <div className="bg-white rounded-[32px] border border-slate-200 shadow-xl overflow-hidden">
 
-            <div className="px-6 py-5 border-b border-slate-200 bg-slate-50">
+            <div className="px-6 py-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between gap-4">
 
               <h2 className="text-2xl font-bold text-slate-800">
                 🏫 Rekap Sekolah
               </h2>
+
+              <button
+                onClick={() =>
+                  downloadExcel(
+                    rekapSekolah,
+                    "rekap-sekolah"
+                  )
+                }
+                className="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-2xl text-sm font-semibold transition-all"
+              >
+                ⬇️ Download Excel
+              </button>
 
             </div>
 
@@ -590,306 +647,34 @@ export default function Home() {
 
           <div className="space-y-8">
 
-            {/* HEADER ADMIN */}
-            <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 rounded-[32px] p-5 md:p-7 text-white shadow-2xl">
-
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-center">
-
-                {/* KIRI */}
-                <div>
-
-                  <div className="flex items-center gap-3">
-
-                    <div className="text-4xl">
-                      📊
-                    </div>
-
-                    <div>
-
-                      <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-                        Rekap Admin
-                      </h2>
-
-                      <p className="text-slate-300 mt-1 text-xs md:text-sm">
-                        Statistik keseluruhan data Pra SMPB SMKN 1 Cipanas
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-                {/* TENGAH */}
-                <div className="flex justify-center">
-
-                  <div className="bg-white/10 backdrop-blur-md rounded-[24px] px-5 py-5 border border-white/10 w-full max-w-md">
-
-                    <div className="grid grid-cols-2 gap-4">
-
-                      <div className="text-center">
-
-                        <div className="text-4xl mb-2">
-                          👨
-                        </div>
-
-                        <div className="text-xs text-slate-300">
-                          Laki-Laki
-                        </div>
-
-                        <div className="text-3xl font-bold mt-2">
-                          {totalLaki}
-                        </div>
-
-                      </div>
-
-                      <div className="text-center">
-
-                        <div className="text-4xl mb-2">
-                          👩
-                        </div>
-
-                        <div className="text-xs text-slate-300">
-                          Perempuan
-                        </div>
-
-                        <div className="text-3xl font-bold mt-2">
-                          {totalPerempuan}
-                        </div>
-
-                      </div>
-
-                    </div>
-
-                    <div className="my-5 border-t border-white/10"></div>
-
-                    <div className="grid grid-cols-2 gap-4">
-
-                      <div className="text-center">
-
-                        <div className="text-4xl mb-2">
-                          📍
-                        </div>
-
-                        <div className="text-xs text-slate-300">
-                          Banten
-                        </div>
-
-                        <div className="text-3xl font-bold mt-2">
-                          {totalBanten}
-                        </div>
-
-                      </div>
-
-                      <div className="text-center">
-
-                        <div className="text-4xl mb-2">
-                          🌍
-                        </div>
-
-                        <div className="text-xs text-slate-300">
-                          Luar Banten
-                        </div>
-
-                        <div className="text-3xl font-bold mt-2">
-                          {totalLuarBanten}
-                        </div>
-
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-                {/* KANAN */}
-                <div className="flex justify-end">
-
-                  <div className="bg-white/10 backdrop-blur-md rounded-[24px] px-5 py-5 border border-white/10 min-w-[190px] text-center">
-
-                    <div className="text-3xl mb-2">
-                      🎯
-                    </div>
-
-                    <div className="text-xs text-slate-300">
-                      Total Kuota
-                    </div>
-
-                    <div className="text-4xl font-bold mt-2">
-                      {KUOTA}
-                    </div>
-
-                    <div className="mt-4 pt-3 border-t border-white/10">
-
-                      <div className="text-[11px] text-slate-300">
-                        🕒 Update Data
-                      </div>
-
-                      <div className="text-xs font-semibold mt-1">
-                        18 Mei 2026 • 19.00 WIB
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-            {/* CARD STATISTIK ADMIN */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-
-              <div className="bg-white rounded-[32px] p-7 shadow-xl border border-slate-200">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-slate-500 text-sm">
-                      📋 Total Pendaftar
-                    </p>
-
-                    <h3 className="text-5xl font-bold text-slate-800 mt-4">
-                      {totalPendaftar}
-                    </h3>
-
-                  </div>
-
-                  <div className="text-5xl">
-                    🧾
-                  </div>
-
-                </div>
-
-              </div>
-
-              <div className="bg-gradient-to-br from-cyan-500 to-blue-700 rounded-[32px] p-7 shadow-xl text-white">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-cyan-100 text-sm">
-                      ✅ Sudah Aktivasi
-                    </p>
-
-                    <h3 className="text-5xl font-bold mt-4">
-                      {totalSudahAktivasi}
-                    </h3>
-
-                  </div>
-
-                  <div className="text-5xl">
-                    🔓
-                  </div>
-
-                </div>
-
-              </div>
-
-              <div className="bg-gradient-to-br from-orange-400 to-red-600 rounded-[32px] p-7 shadow-xl text-white">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-orange-100 text-sm">
-                      ⏳ Belum Aktivasi
-                    </p>
-
-                    <h3 className="text-5xl font-bold mt-4">
-                      {totalBelumAktivasi}
-                    </h3>
-
-                  </div>
-
-                  <div className="text-5xl">
-                    🔒
-                  </div>
-
-                </div>
-
-              </div>
-
-              <div className="bg-gradient-to-br from-pink-500 to-rose-700 rounded-[32px] p-7 shadow-xl text-white">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-pink-100 text-sm">
-                      📝 Belum Revisi
-                    </p>
-
-                    <h3 className="text-5xl font-bold mt-4">
-                      {totalBelumRevisi}
-                    </h3>
-
-                  </div>
-
-                  <div className="text-5xl">
-                    📄
-                  </div>
-
-                </div>
-
-              </div>
-
-              <div className="bg-gradient-to-br from-violet-500 to-purple-700 rounded-[32px] p-7 shadow-xl text-white">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-violet-100 text-sm">
-                      🆕 Ajuan Baru
-                    </p>
-
-                    <h3 className="text-5xl font-bold mt-4">
-                      {totalAjuanBaru}
-                    </h3>
-
-                  </div>
-
-                  <div className="text-5xl">
-                    📥
-                  </div>
-
-                </div>
-
-              </div>
-
-              <div className="bg-gradient-to-br from-slate-700 to-slate-900 rounded-[32px] p-7 shadow-xl text-white">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-slate-300 text-sm">
-                      🎯 Selisih Kuota
-                    </p>
-
-                    <h3 className="text-5xl font-bold mt-4">
-
-                      {totalPendaftar > KUOTA
-                        ? `+${totalPendaftar - KUOTA}`
-                        : `-${KUOTA - totalPendaftar}`}
-
-                    </h3>
-
-                  </div>
-
-                  <div className="text-5xl">
-                    📈
-                  </div>
-
-                </div>
-
-              </div>
+            <div className="flex justify-end">
+
+              <button
+                onClick={() =>
+                  downloadExcel(
+                    [
+                      {
+                        "Total Pendaftar": totalPendaftar,
+                        "Sudah Aktivasi": totalSudahAktivasi,
+                        "Belum Aktivasi": totalBelumAktivasi,
+                        "Belum Revisi": totalBelumRevisi,
+                        "Ajuan Baru": totalAjuanBaru,
+                        "Laki-Laki": totalLaki,
+                        "Perempuan": totalPerempuan,
+                        "Banten": totalBanten,
+                        "Luar Banten": totalLuarBanten,
+                        "Kuota": KUOTA,
+                        "Selisih Kuota":
+                          totalPendaftar - KUOTA,
+                      },
+                    ],
+                    "rekap-admin"
+                  )
+                }
+                className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl text-sm font-semibold shadow-lg transition-all"
+              >
+                ⬇️ Download Rekap Admin
+              </button>
 
             </div>
 
