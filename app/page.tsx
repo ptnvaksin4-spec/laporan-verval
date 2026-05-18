@@ -74,6 +74,7 @@ export default function Home() {
 
   const totalPendaftar = data.length;
 
+  // SUDAH AKTIVASI
   const totalSudahAktivasi = data.filter((item) => {
 
     const key = Object.keys(item).find(
@@ -88,6 +89,7 @@ export default function Home() {
 
   }).length;
 
+  // BELUM AKTIVASI
   const totalBelumAktivasi = data.filter((item) => {
 
     const key = Object.keys(item).find(
@@ -102,6 +104,7 @@ export default function Home() {
 
   }).length;
 
+  // BELUM REVISI
   const totalBelumRevisi = data.filter((item) => {
 
     const key = Object.keys(item).find(
@@ -116,6 +119,7 @@ export default function Home() {
 
   }).length;
 
+  // AJUAN BARU
   const totalAjuanBaru = data.filter((item) => {
 
     const key = Object.keys(item).find(
@@ -173,7 +177,7 @@ export default function Home() {
   }).length;
 
   // =========================
-  // BANTEN & LUAR BANTEN
+  // WILAYAH
   // =========================
 
   const totalBanten = data.filter((item) => {
@@ -184,10 +188,10 @@ export default function Home() {
     );
 
     const value = key
-      ? String(item[key]).toLowerCase()
+      ? String(item[key]).toLowerCase().trim()
       : "";
 
-    return value.includes("banten");
+    return value === "banten";
 
   }).length;
 
@@ -199,12 +203,12 @@ export default function Home() {
     );
 
     const value = key
-      ? String(item[key]).toLowerCase()
+      ? String(item[key]).toLowerCase().trim()
       : "";
 
     return (
-      value &&
-      !value.includes("banten")
+      value !== "" &&
+      value !== "banten"
     );
 
   }).length;
@@ -591,26 +595,26 @@ export default function Home() {
           <div className="space-y-8">
 
             {/* HEADER ADMIN */}
-            <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 rounded-[36px] p-8 md:p-10 text-white shadow-2xl">
+            <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 rounded-[32px] p-5 md:p-7 text-white shadow-2xl">
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-center">
 
                 {/* KIRI */}
                 <div>
 
                   <div className="flex items-center gap-3">
 
-                    <div className="text-5xl">
+                    <div className="text-4xl">
                       📊
                     </div>
 
                     <div>
 
-                      <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
+                      <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
                         Rekap Admin
                       </h2>
 
-                      <p className="text-slate-300 mt-2 text-sm md:text-base">
+                      <p className="text-slate-300 mt-1 text-xs md:text-sm">
                         Statistik keseluruhan data Pra SMPB SMKN 1 Cipanas
                       </p>
 
@@ -623,22 +627,22 @@ export default function Home() {
                 {/* TENGAH */}
                 <div className="flex justify-center">
 
-                  <div className="bg-white/10 backdrop-blur-md rounded-[28px] px-8 py-6 border border-white/10 w-full max-w-md">
+                  <div className="bg-white/10 backdrop-blur-md rounded-[24px] px-5 py-5 border border-white/10 w-full max-w-md">
 
                     {/* JK */}
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-2 gap-4">
 
                       <div className="text-center">
 
-                        <div className="text-5xl mb-3">
+                        <div className="text-4xl mb-2">
                           👨
                         </div>
 
-                        <div className="text-sm text-slate-300">
+                        <div className="text-xs text-slate-300">
                           Laki-Laki
                         </div>
 
-                        <div className="text-4xl font-bold mt-2">
+                        <div className="text-3xl font-bold mt-2">
                           {totalLaki}
                         </div>
 
@@ -646,15 +650,15 @@ export default function Home() {
 
                       <div className="text-center">
 
-                        <div className="text-5xl mb-3">
+                        <div className="text-4xl mb-2">
                           👩
                         </div>
 
-                        <div className="text-sm text-slate-300">
+                        <div className="text-xs text-slate-300">
                           Perempuan
                         </div>
 
-                        <div className="text-4xl font-bold mt-2">
+                        <div className="text-3xl font-bold mt-2">
                           {totalPerempuan}
                         </div>
 
@@ -663,22 +667,22 @@ export default function Home() {
                     </div>
 
                     {/* GARIS */}
-                    <div className="my-6 border-t border-white/10"></div>
+                    <div className="my-5 border-t border-white/10"></div>
 
                     {/* WILAYAH */}
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-2 gap-4">
 
                       <div className="text-center">
 
-                        <div className="text-5xl mb-3">
+                        <div className="text-4xl mb-2">
                           📍
                         </div>
 
-                        <div className="text-sm text-slate-300">
+                        <div className="text-xs text-slate-300">
                           Banten
                         </div>
 
-                        <div className="text-4xl font-bold mt-2">
+                        <div className="text-3xl font-bold mt-2">
                           {totalBanten}
                         </div>
 
@@ -686,15 +690,15 @@ export default function Home() {
 
                       <div className="text-center">
 
-                        <div className="text-5xl mb-3">
+                        <div className="text-4xl mb-2">
                           🌍
                         </div>
 
-                        <div className="text-sm text-slate-300">
+                        <div className="text-xs text-slate-300">
                           Luar Banten
                         </div>
 
-                        <div className="text-4xl font-bold mt-2">
+                        <div className="text-3xl font-bold mt-2">
                           {totalLuarBanten}
                         </div>
 
@@ -709,185 +713,32 @@ export default function Home() {
                 {/* KANAN */}
                 <div className="flex justify-end">
 
-                  <div className="bg-white/10 backdrop-blur-md rounded-3xl px-6 py-5 border border-white/10 min-w-[220px] text-center">
+                  <div className="bg-white/10 backdrop-blur-md rounded-[24px] px-5 py-5 border border-white/10 min-w-[190px] text-center">
 
-                    <div className="text-4xl mb-2">
+                    <div className="text-3xl mb-2">
                       🎯
                     </div>
 
-                    <div className="text-sm text-slate-300">
+                    <div className="text-xs text-slate-300">
                       Total Kuota
                     </div>
 
-                    <div className="text-5xl font-bold mt-3">
+                    <div className="text-4xl font-bold mt-2">
                       {KUOTA}
                     </div>
 
-                    <div className="mt-5 pt-4 border-t border-white/10">
+                    <div className="mt-4 pt-3 border-t border-white/10">
 
-                      <div className="text-xs text-slate-300">
+                      <div className="text-[11px] text-slate-300">
                         🕒 Update Data
                       </div>
 
-                      <div className="text-sm font-semibold mt-1">
+                      <div className="text-xs font-semibold mt-1">
                         18 Mei 2026 • 19.00 WIB
                       </div>
 
                     </div>
 
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-            {/* CARD */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-
-              <div className="bg-white rounded-[32px] p-7 shadow-xl border border-slate-200">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-slate-500 text-sm">
-                      📋 Total Pendaftar
-                    </p>
-
-                    <h3 className="text-5xl font-bold text-slate-800 mt-4">
-                      {totalPendaftar}
-                    </h3>
-
-                  </div>
-
-                  <div className="text-5xl">
-                    🧾
-                  </div>
-
-                </div>
-
-              </div>
-
-              <div className="bg-gradient-to-br from-cyan-500 to-blue-700 rounded-[32px] p-7 shadow-xl text-white">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-cyan-100 text-sm">
-                      ✅ Sudah Aktivasi
-                    </p>
-
-                    <h3 className="text-5xl font-bold mt-4">
-                      {totalSudahAktivasi}
-                    </h3>
-
-                  </div>
-
-                  <div className="text-5xl">
-                    🔓
-                  </div>
-
-                </div>
-
-              </div>
-
-              <div className="bg-gradient-to-br from-orange-400 to-red-600 rounded-[32px] p-7 shadow-xl text-white">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-orange-100 text-sm">
-                      ⏳ Belum Aktivasi
-                    </p>
-
-                    <h3 className="text-5xl font-bold mt-4">
-                      {totalBelumAktivasi}
-                    </h3>
-
-                  </div>
-
-                  <div className="text-5xl">
-                    🔒
-                  </div>
-
-                </div>
-
-              </div>
-
-              <div className="bg-gradient-to-br from-pink-500 to-rose-700 rounded-[32px] p-7 shadow-xl text-white">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-pink-100 text-sm">
-                      📝 Belum Revisi
-                    </p>
-
-                    <h3 className="text-5xl font-bold mt-4">
-                      {totalBelumRevisi}
-                    </h3>
-
-                  </div>
-
-                  <div className="text-5xl">
-                    📄
-                  </div>
-
-                </div>
-
-              </div>
-
-              <div className="bg-gradient-to-br from-violet-500 to-purple-700 rounded-[32px] p-7 shadow-xl text-white">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-violet-100 text-sm">
-                      🆕 Ajuan Baru
-                    </p>
-
-                    <h3 className="text-5xl font-bold mt-4">
-                      {totalAjuanBaru}
-                    </h3>
-
-                  </div>
-
-                  <div className="text-5xl">
-                    📥
-                  </div>
-
-                </div>
-
-              </div>
-
-              <div className="bg-gradient-to-br from-slate-700 to-slate-900 rounded-[32px] p-7 shadow-xl text-white">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-slate-300 text-sm">
-                      🎯 Selisih Kuota
-                    </p>
-
-                    <h3 className="text-5xl font-bold mt-4">
-
-                      {totalPendaftar > KUOTA
-                        ? `+${totalPendaftar - KUOTA}`
-                        : `-${KUOTA - totalPendaftar}`}
-
-                    </h3>
-
-                  </div>
-
-                  <div className="text-5xl">
-                    📈
                   </div>
 
                 </div>
