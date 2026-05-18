@@ -74,7 +74,6 @@ export default function Home() {
 
   const totalPendaftar = data.length;
 
-  // SUDAH AKTIVASI
   const totalSudahAktivasi = data.filter((item) => {
 
     const key = Object.keys(item).find(
@@ -89,7 +88,6 @@ export default function Home() {
 
   }).length;
 
-  // BELUM AKTIVASI
   const totalBelumAktivasi = data.filter((item) => {
 
     const key = Object.keys(item).find(
@@ -104,7 +102,6 @@ export default function Home() {
 
   }).length;
 
-  // BELUM REVISI
   const totalBelumRevisi = data.filter((item) => {
 
     const key = Object.keys(item).find(
@@ -119,7 +116,6 @@ export default function Home() {
 
   }).length;
 
-  // AJUAN BARU
   const totalAjuanBaru = data.filter((item) => {
 
     const key = Object.keys(item).find(
@@ -629,7 +625,6 @@ export default function Home() {
 
                   <div className="bg-white/10 backdrop-blur-md rounded-[24px] px-5 py-5 border border-white/10 w-full max-w-md">
 
-                    {/* JK */}
                     <div className="grid grid-cols-2 gap-4">
 
                       <div className="text-center">
@@ -666,10 +661,8 @@ export default function Home() {
 
                     </div>
 
-                    {/* GARIS */}
                     <div className="my-5 border-t border-white/10"></div>
 
-                    {/* WILAYAH */}
                     <div className="grid grid-cols-2 gap-4">
 
                       <div className="text-center">
@@ -739,6 +732,159 @@ export default function Home() {
 
                     </div>
 
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* CARD STATISTIK ADMIN */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+
+              <div className="bg-white rounded-[32px] p-7 shadow-xl border border-slate-200">
+
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-slate-500 text-sm">
+                      📋 Total Pendaftar
+                    </p>
+
+                    <h3 className="text-5xl font-bold text-slate-800 mt-4">
+                      {totalPendaftar}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-5xl">
+                    🧾
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div className="bg-gradient-to-br from-cyan-500 to-blue-700 rounded-[32px] p-7 shadow-xl text-white">
+
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-cyan-100 text-sm">
+                      ✅ Sudah Aktivasi
+                    </p>
+
+                    <h3 className="text-5xl font-bold mt-4">
+                      {totalSudahAktivasi}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-5xl">
+                    🔓
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div className="bg-gradient-to-br from-orange-400 to-red-600 rounded-[32px] p-7 shadow-xl text-white">
+
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-orange-100 text-sm">
+                      ⏳ Belum Aktivasi
+                    </p>
+
+                    <h3 className="text-5xl font-bold mt-4">
+                      {totalBelumAktivasi}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-5xl">
+                    🔒
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div className="bg-gradient-to-br from-pink-500 to-rose-700 rounded-[32px] p-7 shadow-xl text-white">
+
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-pink-100 text-sm">
+                      📝 Belum Revisi
+                    </p>
+
+                    <h3 className="text-5xl font-bold mt-4">
+                      {totalBelumRevisi}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-5xl">
+                    📄
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div className="bg-gradient-to-br from-violet-500 to-purple-700 rounded-[32px] p-7 shadow-xl text-white">
+
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-violet-100 text-sm">
+                      🆕 Ajuan Baru
+                    </p>
+
+                    <h3 className="text-5xl font-bold mt-4">
+                      {totalAjuanBaru}
+                    </h3>
+
+                  </div>
+
+                  <div className="text-5xl">
+                    📥
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div className="bg-gradient-to-br from-slate-700 to-slate-900 rounded-[32px] p-7 shadow-xl text-white">
+
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-slate-300 text-sm">
+                      🎯 Selisih Kuota
+                    </p>
+
+                    <h3 className="text-5xl font-bold mt-4">
+
+                      {totalPendaftar > KUOTA
+                        ? `+${totalPendaftar - KUOTA}`
+                        : `-${KUOTA - totalPendaftar}`}
+
+                    </h3>
+
+                  </div>
+
+                  <div className="text-5xl">
+                    📈
                   </div>
 
                 </div>
