@@ -168,7 +168,7 @@ export default function Home() {
               </p>
 
               <p className="text-blue-200 text-xs md:text-sm mt-1">
-                Update data: 16 Mei 2026 • 19.30 WIB
+                Update data: 18 Mei 2026 • 19.00 WIB
               </p>
 
             </div>
