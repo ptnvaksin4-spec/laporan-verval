@@ -726,7 +726,7 @@ export default function Home() {
                       </div>
 
                       <div className="text-xs font-semibold mt-1">
-                        18 Mei 2026 • 19.00 WIB
+                        19 Mei 2026 • 20.00 WIB
                       </div>
 
                     </div>
