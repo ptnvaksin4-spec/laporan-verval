@@ -286,73 +286,83 @@ export default function Home() {
     const title = "Rekap Sekolah";
     const date = "19 Mei 2026 • 20.00 WIB";
 
-    doc.setFontSize(18);
+    const pageW = doc.internal.pageSize.getWidth();
+    const margin = 40;
+    let y = 56;
+
+    // Header
     doc.setFont("helvetica", "bold");
-    doc.text(title, 40, 50);
-    doc.setFontSize(11);
+    doc.setFontSize(16);
+    doc.text(title, pageW / 2, y, { align: "center" });
     doc.setFont("helvetica", "normal");
-    doc.text(`Tanggal download: ${date}`, 40, 70);
+    doc.setFontSize(10);
+    doc.text(date, pageW - margin, y, { align: "right" });
 
-    const headers = ["No", "Sekolah", "Laki-laki", "Perempuan", "Total"];
-    const colX = [40, 80, 380, 460, 540];
-    let y = 110;
+    y += 26;
+    // Table header
+    const colWidths = [40, pageW - margin * 2 - 240, 60, 60, 60];
+    const cols = [margin, margin + colWidths[0], margin + colWidths[0] + colWidths[1], margin + colWidths[0] + colWidths[1] + colWidths[2], margin + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3]];
 
-    doc.setFillColor(240, 240, 240);
-    doc.rect(36, y - 14, 520, 22, "F");
-    doc.setDrawColor(200, 200, 200);
-    doc.setLineWidth(0.5);
-    doc.line(36, y + 8, 556, y + 8);
-
+    doc.setFillColor(245, 245, 245);
+    doc.rect(margin - 4, y - 14, pageW - margin * 2 + 8, 22, "F");
+    doc.setDrawColor(210, 210, 210);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
-    headers.forEach((header, index) => {
-      doc.text(header, colX[index], y);
+    const headers = ["No", "Sekolah", "Laki-laki", "Perempuan", "Total"];
+    headers.forEach((h, i) => {
+      const x = i === 0 ? cols[0] : cols[i];
+      doc.text(h, x + (i === 1 ? 6 : colWidths[i] - 6), y, { align: i === 1 ? "left" : "right" });
     });
 
-    y += 28;
+    y += 24;
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
 
+    // Rows with alternating background
     let sumLaki = 0;
     let sumPerempuan = 0;
     let sumTotal = 0;
 
-    rekapSekolah.forEach((item: any, index: number) => {
+    rekapSekolah.forEach((item: any, idx: number) => {
       if (y > 760) {
         doc.addPage();
         y = 60;
       }
 
-      doc.text(String(index + 1), colX[0], y);
-      doc.text(item.nama, colX[1], y, { maxWidth: 280 });
-      doc.text(String(item.laki), colX[2], y, { align: "right" });
-      doc.text(String(item.perempuan), colX[3], y, { align: "right" });
-      doc.text(String(item.total), colX[4], y, { align: "right" });
-      doc.line(36, y + 6, 556, y + 6);
+      if (idx % 2 === 0) {
+        doc.setFillColor(250, 250, 250);
+        doc.rect(margin - 4, y - 12, pageW - margin * 2 + 8, 18, "F");
+      }
+
+      doc.text(String(idx + 1), cols[0] + colWidths[0] - 6, y, { align: "right" });
+      doc.text(item.nama, cols[1] + 6, y, { maxWidth: colWidths[1] - 10 });
+      doc.text(String(item.laki), cols[2] + colWidths[2] - 6, y, { align: "right" });
+      doc.text(String(item.perempuan), cols[3] + colWidths[3] - 6, y, { align: "right" });
+      doc.text(String(item.total), cols[4] + colWidths[4] - 6, y, { align: "right" });
 
       sumLaki += Number(item.laki) || 0;
       sumPerempuan += Number(item.perempuan) || 0;
       sumTotal += Number(item.total) || 0;
 
-      y += 20;
+      y += 18;
     });
 
-    // Footer totals
-    if (y > 720) {
+    // Totals row
+    if (y > 760) {
       doc.addPage();
       y = 60;
     }
-
-    y += 6;
-    doc.setLineWidth(1);
-    doc.line(36, y, 556, y);
-    y += 12;
-
+    doc.setFillColor(230, 230, 230);
+    doc.rect(margin - 4, y - 12, pageW - margin * 2 + 8, 20, "F");
     doc.setFont("helvetica", "bold");
-    doc.text("TOTAL", colX[1], y);
-    doc.text(String(sumLaki), colX[2], y, { align: "right" });
-    doc.text(String(sumPerempuan), colX[3], y, { align: "right" });
-    doc.text(String(sumTotal), colX[4], y, { align: "right" });
+    doc.text("TOTAL", cols[1] + 6, y);
+    doc.text(String(sumLaki), cols[2] + colWidths[2] - 6, y, { align: "right" });
+    doc.text(String(sumPerempuan), cols[3] + colWidths[3] - 6, y, { align: "right" });
+    doc.text(String(sumTotal), cols[4] + colWidths[4] - 6, y, { align: "right" });
+
+    // Footer small note
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.text(`Generated: ${date}`, margin, doc.internal.pageSize.getHeight() - 30);
 
     doc.save("rekap-sekolah.pdf");
   };
@@ -362,106 +372,83 @@ export default function Home() {
     const title = "Rekap Admin";
     const date = "19 Mei 2026 • 20.00 WIB";
 
-    const rows = [
+    const pageW = doc.internal.pageSize.getWidth();
+    const margin = 40;
+    let y = 50;
+
+    // Header
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text(title, margin, y);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text(date, pageW - margin, y, { align: "right" });
+
+    y += 22;
+
+    // Summary cards (clean, white background with subtle border)
+    const cardW = 220;
+    const cardH = 72;
+    const gap = 18;
+    const startX = margin;
+
+    const stats = [
+      { label: "Total Pendaftar", value: String(totalPendaftar) },
+      { label: "Laki-laki", value: String(totalLaki) },
+      { label: "Perempuan", value: String(totalPerempuan) },
+      { label: "Kuota", value: String(KUOTA) },
+    ];
+
+    stats.forEach((s, i) => {
+      const x = startX + i * (cardW + gap);
+      doc.setFillColor(255, 255, 255);
+      doc.setDrawColor(220, 220, 220);
+      doc.roundedRect(x, y, cardW, cardH, 6, 6);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(18);
+      doc.text(s.value, x + 12, y + 28);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+      doc.text(s.label, x + 12, y + 46);
+    });
+
+    y += cardH + 22;
+
+    // Detail two-column table for other metrics
+    const detailX = margin;
+    const detailW = pageW - margin * 2;
+    const colALeft = detailX + 8;
+    const colBLeft = detailX + detailW / 2 + 8;
+
+    const details = [
       ["Sudah Aktivasi", String(totalSudahAktivasi)],
       ["Belum Aktivasi", String(totalBelumAktivasi)],
       ["Belum Revisi", String(totalBelumRevisi)],
       ["Ajuan Baru", String(totalAjuanBaru)],
       ["Banten", String(totalBanten)],
       ["Luar Banten", String(totalLuarBanten)],
+      ["Selisih Kuota", totalPendaftar > KUOTA ? `+${totalPendaftar - KUOTA}` : `-${KUOTA - totalPendaftar}`],
     ];
 
-    doc.setFontSize(18);
-    doc.setFont("helvetica", "bold");
-    doc.text(title, 40, 50);
     doc.setFontSize(11);
-    doc.setFont("helvetica", "normal");
-    doc.text(`Tanggal download: ${date}`, 40, 68);
-
-    // Top summary boxes (landscape)
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
-    let y = 80;
-    const statW = 200;
-    const statH = 72;
-    const gap = 18;
-    const startX = 40;
-
-    const stats = [
-      { label: "Total Pendaftar", value: String(totalPendaftar), bg: [58, 123, 213], icon: "P" },
-      { label: "Laki-laki", value: String(totalLaki), bg: [34, 197, 94], icon: "L" },
-      { label: "Perempuan", value: String(totalPerempuan), bg: [249, 115, 22], icon: "W" },
-    ];
-
-    stats.forEach((s, i) => {
-      const x = startX + i * (statW + gap);
-      // card background
-      doc.setFillColor(s.bg[0], s.bg[1], s.bg[2]);
-      doc.roundedRect(x, y, statW, statH, 8, 8, "F");
-
-      // small icon circle
-      const cx = x + 16;
-      const cy = y + 18;
-      doc.setFillColor(255, 255, 255);
-      doc.circle(cx, cy, 12, "F");
-      doc.setFontSize(12);
-      doc.setTextColor(0, 0, 0);
-      doc.setFont("helvetica", "bold");
-      doc.text(s.icon, cx, cy + 4, { align: "center" });
-
-      // value and label
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(20);
-      doc.text(s.value, x + statW - 14, y + 28, { align: "right" });
-      doc.setFontSize(11);
-      doc.setFont("helvetica", "normal");
-      doc.text(s.label, x + statW - 14, y + 44, { align: "right" });
-      doc.setTextColor(0, 0, 0);
-    });
-
-    y += statH + 22;
-
-    // Detail rows
-    const boxX = 40;
-    const valueX = 320;
-
-    rows.forEach(([label, value], index) => {
-      if (y > 740) {
+    details.forEach((d, i) => {
+      const rowY = y + i * 22;
+      if (rowY > doc.internal.pageSize.getHeight() - 60) {
         doc.addPage();
         y = 60;
       }
-
-      doc.setFillColor(250, 250, 250);
-      doc.rect(boxX, y - 6, 520, 28, "F");
-      doc.setDrawColor(230, 230, 230);
-      doc.rect(boxX, y - 6, 520, 28);
-
+      const left = i % 2 === 0 ? colALeft : colBLeft;
+      const label = d[0];
+      const value = d[1];
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(11);
-      doc.text(label, boxX + 12, y + 8);
+      doc.text(label, left, y + Math.floor(i / 2) * 22 + 12 + (i % 2 === 0 ? 0 : 0));
       doc.setFont("helvetica", "normal");
-      doc.text(value, valueX + 8, y + 8);
-
-      y += 36;
+      doc.text(String(value), left + 120, y + Math.floor(i / 2) * 22 + 12);
     });
 
-    // Kuota & Selisih
-    if (y > 720) {
-      doc.addPage();
-      y = 60;
-    }
-
-    const selisih = totalPendaftar - KUOTA;
-    const selisihLabel = selisih >= 0 ? `+${selisih}` : `${selisih}`;
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
-    doc.text("Kuota:", boxX + 12, y + 8);
-    doc.text(String(KUOTA), valueX + 8, y + 8);
-
-    y += 22;
-    doc.text("Selisih Kuota:", boxX + 12, y + 8);
-    doc.text(selisihLabel, valueX + 8, y + 8);
+    // Footer small note
+    doc.setFontSize(9);
+    doc.text(`Generated: ${date}`, margin, doc.internal.pageSize.getHeight() - 30);
 
     doc.save("rekap-admin.pdf");
   };
