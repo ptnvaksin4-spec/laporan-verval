@@ -313,6 +313,10 @@ export default function Home() {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
 
+    let sumLaki = 0;
+    let sumPerempuan = 0;
+    let sumTotal = 0;
+
     rekapSekolah.forEach((item: any, index: number) => {
       if (y > 760) {
         doc.addPage();
@@ -325,8 +329,30 @@ export default function Home() {
       doc.text(String(item.perempuan), colX[3], y, { align: "right" });
       doc.text(String(item.total), colX[4], y, { align: "right" });
       doc.line(36, y + 6, 556, y + 6);
+
+      sumLaki += Number(item.laki) || 0;
+      sumPerempuan += Number(item.perempuan) || 0;
+      sumTotal += Number(item.total) || 0;
+
       y += 20;
     });
+
+    // Footer totals
+    if (y > 720) {
+      doc.addPage();
+      y = 60;
+    }
+
+    y += 6;
+    doc.setLineWidth(1);
+    doc.line(36, y, 556, y);
+    y += 12;
+
+    doc.setFont("helvetica", "bold");
+    doc.text("TOTAL", colX[1], y);
+    doc.text(String(sumLaki), colX[2], y, { align: "right" });
+    doc.text(String(sumPerempuan), colX[3], y, { align: "right" });
+    doc.text(String(sumTotal), colX[4], y, { align: "right" });
 
     doc.save("rekap-sekolah.pdf");
   };
