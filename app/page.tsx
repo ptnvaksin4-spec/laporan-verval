@@ -358,7 +358,7 @@ export default function Home() {
   };
 
   const downloadAdminPdf = () => {
-    const doc = new jsPDF({ unit: "pt", format: "a4" });
+    const doc = new jsPDF({ unit: "pt", format: "a4", orientation: "landscape" });
     const title = "Rekap Admin";
     const date = "19 Mei 2026 • 20.00 WIB";
 
@@ -378,34 +378,48 @@ export default function Home() {
     doc.setFont("helvetica", "normal");
     doc.text(`Tanggal download: ${date}`, 40, 68);
 
-    // Top summary boxes
-    let y = 100;
-    const statW = 160;
-    const statH = 62;
-    const gap = 12;
+    // Top summary boxes (landscape)
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    let y = 80;
+    const statW = 200;
+    const statH = 72;
+    const gap = 18;
     const startX = 40;
 
     const stats = [
-      { label: "Total Pendaftar", value: String(totalPendaftar), bg: [58, 123, 213] },
-      { label: "Laki-laki", value: String(totalLaki), bg: [34, 197, 94] },
-      { label: "Perempuan", value: String(totalPerempuan), bg: [249, 115, 22] },
+      { label: "Total Pendaftar", value: String(totalPendaftar), bg: [58, 123, 213], icon: "P" },
+      { label: "Laki-laki", value: String(totalLaki), bg: [34, 197, 94], icon: "L" },
+      { label: "Perempuan", value: String(totalPerempuan), bg: [249, 115, 22], icon: "W" },
     ];
 
     stats.forEach((s, i) => {
       const x = startX + i * (statW + gap);
+      // card background
       doc.setFillColor(s.bg[0], s.bg[1], s.bg[2]);
-      doc.rect(x, y, statW, statH, "F");
+      doc.roundedRect(x, y, statW, statH, 8, 8, "F");
+
+      // small icon circle
+      const cx = x + 16;
+      const cy = y + 18;
+      doc.setFillColor(255, 255, 255);
+      doc.circle(cx, cy, 12, "F");
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
       doc.setFont("helvetica", "bold");
+      doc.text(s.icon, cx, cy + 4, { align: "center" });
+
+      // value and label
       doc.setTextColor(255, 255, 255);
-      doc.setFontSize(18);
-      doc.text(s.value, x + statW / 2, y + 28, { align: "center" });
-      doc.setFontSize(10);
+      doc.setFontSize(20);
+      doc.text(s.value, x + statW - 14, y + 28, { align: "right" });
+      doc.setFontSize(11);
       doc.setFont("helvetica", "normal");
-      doc.text(s.label, x + statW / 2, y + 44, { align: "center" });
+      doc.text(s.label, x + statW - 14, y + 44, { align: "right" });
       doc.setTextColor(0, 0, 0);
     });
 
-    y += statH + 18;
+    y += statH + 22;
 
     // Detail rows
     const boxX = 40;
