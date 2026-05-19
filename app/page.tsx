@@ -433,13 +433,13 @@ export default function Home() {
       doc.rect(x, y, 6, cardH, "F");
 
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(18);
+      doc.setFontSize(22);
       doc.setTextColor(34, 34, 34);
-      doc.text(stat.value, x + 18, y + 30);
+      doc.text(stat.value, x + 18, y + 34);
       doc.setFont("helvetica", "normal");
       doc.setFontSize(10);
       doc.setTextColor(110, 110, 110);
-      doc.text(stat.label, x + 18, y + 48);
+      doc.text(stat.label, x + 18, y + 54);
     });
 
     y += cardH + 30;
@@ -455,12 +455,12 @@ export default function Home() {
       ["Selisih Kuota", totalPendaftar > KUOTA ? `+${totalPendaftar - KUOTA}` : `-${KUOTA - totalPendaftar}`],
     ];
 
-    const detailCardHeight = 32;
+    const detailCardHeight = 38;
     detailRows.forEach((row, index) => {
       const col = index % 2;
       const rowIndex = Math.floor(index / 2);
       const x = detailX + col * (detailWidth + 20);
-      const rowY = y + rowIndex * (detailCardHeight + 8);
+      const rowY = y + rowIndex * (detailCardHeight + 10);
       if (rowY + detailCardHeight > pageH - margin - 20) {
         doc.addPage();
         y = margin;
@@ -472,11 +472,12 @@ export default function Home() {
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
       doc.setTextColor(40, 40, 40);
-      doc.text(row[0], x + 12, rowY + 12);
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(11);
-      doc.setTextColor(row[0] === "Selisih Kuota" && Number(row[1]) < 0 ? 180 : 34, row[0] === "Selisih Kuota" && Number(row[1]) >= 0 ? 90 : 0, 34);
-      doc.text(String(row[1]), x + detailWidth - 12, rowY + 12, { align: "right" });
+      doc.text(row[0], x + 12, rowY + 14);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      const valueColor = row[0] === "Selisih Kuota" && Number(row[1]) < 0 ? [180, 18, 30] : [0, 80, 160];
+      doc.setTextColor(valueColor[0], valueColor[1], valueColor[2]);
+      doc.text(String(row[1]), x + detailWidth - 12, rowY + 14, { align: "right" });
     });
 
     const footerY = pageH - margin + 10;
