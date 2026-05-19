@@ -224,9 +224,13 @@ export default function Home() {
           k.toLowerCase().includes("sekolah")
       );
 
-      const namaSekolah = sekolahKey
-        ? item[sekolahKey]
-        : "Tidak Diketahui";
+      const rawNamaSekolah = sekolahKey
+        ? String(item[sekolahKey] ?? "")
+        : "";
+
+      const namaSekolah = rawNamaSekolah
+        .trim()
+        .replace(/\s+/g, " ") || "Tidak Diketahui";
 
       const jkKey = Object.keys(item).find(
         (k) =>
