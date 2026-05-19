@@ -433,13 +433,13 @@ export default function Home() {
       doc.rect(x, y, 6, cardH, "F");
 
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(22);
+      doc.setFontSize(34);
       doc.setTextColor(34, 34, 34);
-      doc.text(stat.value, x + 18, y + 34);
+      doc.text(stat.value, x + 18, y + 38);
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(10);
+      doc.setFontSize(11);
       doc.setTextColor(110, 110, 110);
-      doc.text(stat.label, x + 18, y + 54);
+      doc.text(stat.label, x + 18, y + 56);
     });
 
     y += cardH + 30;
@@ -474,10 +474,10 @@ export default function Home() {
       doc.setTextColor(40, 40, 40);
       doc.text(row[0], x + 12, rowY + 14);
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(12);
+      doc.setFontSize(18);
       const valueColor = row[0] === "Selisih Kuota" && Number(row[1]) < 0 ? [180, 18, 30] : [0, 80, 160];
       doc.setTextColor(valueColor[0], valueColor[1], valueColor[2]);
-      doc.text(String(row[1]), x + detailWidth - 12, rowY + 14, { align: "right" });
+      doc.text(String(row[1]), x + detailWidth - 12, rowY + 18, { align: "right" });
     });
 
     const footerY = pageH - margin + 10;
