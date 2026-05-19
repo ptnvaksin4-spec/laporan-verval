@@ -287,27 +287,45 @@ export default function Home() {
     const date = "19 Mei 2026 • 20.00 WIB";
 
     doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
     doc.text(title, 40, 50);
     doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
     doc.text(`Tanggal download: ${date}`, 40, 70);
 
     const headers = ["No", "Sekolah", "Laki-laki", "Perempuan", "Total"];
-    const cols = [40, 80, 330, 420, 510];
-    let y = 100;
+    const colX = [40, 80, 380, 460, 540];
+    let y = 110;
+
+    doc.setFillColor(240, 240, 240);
+    doc.rect(36, y - 14, 520, 22, "F");
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.5);
+    doc.line(36, y + 8, 556, y + 8);
+
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
     headers.forEach((header, index) => {
-      doc.text(header, cols[index], y);
+      doc.text(header, colX[index], y);
     });
-    y += 16;
-    doc.setLineWidth(0.5);
-    doc.line(40, y - 6, 560, y - 6);
+
+    y += 28;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
 
     rekapSekolah.forEach((item: any, index: number) => {
-      const row = [String(index + 1), item.nama, String(item.laki), String(item.perempuan), String(item.total)];
-      row.forEach((cell, cellIndex) => {
-        doc.text(cell, cols[cellIndex], y);
-      });
-      y += 16;
+      if (y > 760) {
+        doc.addPage();
+        y = 60;
+      }
+
+      doc.text(String(index + 1), colX[0], y);
+      doc.text(item.nama, colX[1], y, { maxWidth: 280 });
+      doc.text(String(item.laki), colX[2], y, { align: "right" });
+      doc.text(String(item.perempuan), colX[3], y, { align: "right" });
+      doc.text(String(item.total), colX[4], y, { align: "right" });
+      doc.line(36, y + 6, 556, y + 6);
+      y += 20;
     });
 
     doc.save("rekap-sekolah.pdf");
@@ -333,15 +351,34 @@ export default function Home() {
     ];
 
     doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
     doc.text(title, 40, 50);
     doc.setFontSize(11);
-    doc.text(`Tanggal download: ${date}`, 40, 70);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Tanggal download: ${date}`, 40, 68);
 
+    const boxX = 40;
     let y = 100;
-    doc.setFontSize(11);
-    rows.forEach(([label, value]) => {
-      doc.text(`${label}: ${value}`, 40, y);
-      y += 18;
+    const labelWidth = 220;
+    const valueX = 320;
+
+    rows.forEach(([label, value], index) => {
+      if (y > 760) {
+        doc.addPage();
+        y = 60;
+      }
+
+      doc.setFillColor(245, 245, 245);
+      doc.rect(boxX, y - 6, 500, 24, "F");
+      doc.setDrawColor(220, 220, 220);
+      doc.rect(boxX, y - 6, 500, 24);
+
+      doc.setFont("helvetica", "bold");
+      doc.text(label, boxX + 8, y + 10);
+      doc.setFont("helvetica", "normal");
+      doc.text(value, valueX + 8, y + 10);
+
+      y += 34;
     });
 
     doc.save("rekap-admin.pdf");
