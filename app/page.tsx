@@ -363,17 +363,12 @@ export default function Home() {
     const date = "19 Mei 2026 • 20.00 WIB";
 
     const rows = [
-      ["Total Pendaftar", String(totalPendaftar)],
       ["Sudah Aktivasi", String(totalSudahAktivasi)],
       ["Belum Aktivasi", String(totalBelumAktivasi)],
       ["Belum Revisi", String(totalBelumRevisi)],
       ["Ajuan Baru", String(totalAjuanBaru)],
-      ["Total Laki-laki", String(totalLaki)],
-      ["Total Perempuan", String(totalPerempuan)],
       ["Banten", String(totalBanten)],
       ["Luar Banten", String(totalLuarBanten)],
-      ["Kuota", String(KUOTA)],
-      ["Selisih Kuota", totalPendaftar > KUOTA ? `+${totalPendaftar - KUOTA}` : `-${KUOTA - totalPendaftar}`],
     ];
 
     doc.setFontSize(18);
@@ -383,29 +378,76 @@ export default function Home() {
     doc.setFont("helvetica", "normal");
     doc.text(`Tanggal download: ${date}`, 40, 68);
 
-    const boxX = 40;
+    // Top summary boxes
     let y = 100;
-    const labelWidth = 220;
+    const statW = 160;
+    const statH = 62;
+    const gap = 12;
+    const startX = 40;
+
+    const stats = [
+      { label: "Total Pendaftar", value: String(totalPendaftar), bg: [58, 123, 213] },
+      { label: "Laki-laki", value: String(totalLaki), bg: [34, 197, 94] },
+      { label: "Perempuan", value: String(totalPerempuan), bg: [249, 115, 22] },
+    ];
+
+    stats.forEach((s, i) => {
+      const x = startX + i * (statW + gap);
+      doc.setFillColor(s.bg[0], s.bg[1], s.bg[2]);
+      doc.rect(x, y, statW, statH, "F");
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(18);
+      doc.text(s.value, x + statW / 2, y + 28, { align: "center" });
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text(s.label, x + statW / 2, y + 44, { align: "center" });
+      doc.setTextColor(0, 0, 0);
+    });
+
+    y += statH + 18;
+
+    // Detail rows
+    const boxX = 40;
     const valueX = 320;
 
     rows.forEach(([label, value], index) => {
-      if (y > 760) {
+      if (y > 740) {
         doc.addPage();
         y = 60;
       }
 
-      doc.setFillColor(245, 245, 245);
-      doc.rect(boxX, y - 6, 500, 24, "F");
-      doc.setDrawColor(220, 220, 220);
-      doc.rect(boxX, y - 6, 500, 24);
+      doc.setFillColor(250, 250, 250);
+      doc.rect(boxX, y - 6, 520, 28, "F");
+      doc.setDrawColor(230, 230, 230);
+      doc.rect(boxX, y - 6, 520, 28);
 
       doc.setFont("helvetica", "bold");
-      doc.text(label, boxX + 8, y + 10);
+      doc.setFontSize(11);
+      doc.text(label, boxX + 12, y + 8);
       doc.setFont("helvetica", "normal");
-      doc.text(value, valueX + 8, y + 10);
+      doc.text(value, valueX + 8, y + 8);
 
-      y += 34;
+      y += 36;
     });
+
+    // Kuota & Selisih
+    if (y > 720) {
+      doc.addPage();
+      y = 60;
+    }
+
+    const selisih = totalPendaftar - KUOTA;
+    const selisihLabel = selisih >= 0 ? `+${selisih}` : `${selisih}`;
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text("Kuota:", boxX + 12, y + 8);
+    doc.text(String(KUOTA), valueX + 8, y + 8);
+
+    y += 22;
+    doc.text("Selisih Kuota:", boxX + 12, y + 8);
+    doc.text(selisihLabel, valueX + 8, y + 8);
 
     doc.save("rekap-admin.pdf");
   };
