@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { jsPDF } from "jspdf";
 
 export default function Home() {
 
@@ -280,6 +281,72 @@ export default function Home() {
 
   }, [data]);
 
+  const downloadSekolahPdf = () => {
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+    const title = "Rekap Sekolah";
+    const date = "19 Mei 2026 • 20.00 WIB";
+
+    doc.setFontSize(18);
+    doc.text(title, 40, 50);
+    doc.setFontSize(11);
+    doc.text(`Tanggal download: ${date}`, 40, 70);
+
+    const headers = ["No", "Sekolah", "Laki-laki", "Perempuan", "Total"];
+    const cols = [40, 80, 330, 420, 510];
+    let y = 100;
+    doc.setFontSize(10);
+    headers.forEach((header, index) => {
+      doc.text(header, cols[index], y);
+    });
+    y += 16;
+    doc.setLineWidth(0.5);
+    doc.line(40, y - 6, 560, y - 6);
+
+    rekapSekolah.forEach((item: any, index: number) => {
+      const row = [String(index + 1), item.nama, String(item.laki), String(item.perempuan), String(item.total)];
+      row.forEach((cell, cellIndex) => {
+        doc.text(cell, cols[cellIndex], y);
+      });
+      y += 16;
+    });
+
+    doc.save("rekap-sekolah.pdf");
+  };
+
+  const downloadAdminPdf = () => {
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+    const title = "Rekap Admin";
+    const date = "19 Mei 2026 • 20.00 WIB";
+
+    const rows = [
+      ["Total Pendaftar", String(totalPendaftar)],
+      ["Sudah Aktivasi", String(totalSudahAktivasi)],
+      ["Belum Aktivasi", String(totalBelumAktivasi)],
+      ["Belum Revisi", String(totalBelumRevisi)],
+      ["Ajuan Baru", String(totalAjuanBaru)],
+      ["Total Laki-laki", String(totalLaki)],
+      ["Total Perempuan", String(totalPerempuan)],
+      ["Banten", String(totalBanten)],
+      ["Luar Banten", String(totalLuarBanten)],
+      ["Kuota", String(KUOTA)],
+      ["Selisih Kuota", totalPendaftar > KUOTA ? `+${totalPendaftar - KUOTA}` : `-${KUOTA - totalPendaftar}`],
+    ];
+
+    doc.setFontSize(18);
+    doc.text(title, 40, 50);
+    doc.setFontSize(11);
+    doc.text(`Tanggal download: ${date}`, 40, 70);
+
+    let y = 100;
+    doc.setFontSize(11);
+    rows.forEach(([label, value]) => {
+      doc.text(`${label}: ${value}`, 40, y);
+      y += 18;
+    });
+
+    doc.save("rekap-admin.pdf");
+  };
+
   // =========================
   // LOCK MENU
   // =========================
@@ -505,11 +572,18 @@ export default function Home() {
 
           <div className="bg-white rounded-[32px] border border-slate-200 shadow-xl overflow-hidden">
 
-            <div className="px-6 py-5 border-b border-slate-200 bg-slate-50">
+            <div className="px-6 py-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between gap-4">
 
               <h2 className="text-2xl font-bold text-slate-800">
                 🏫 Rekap Sekolah
               </h2>
+
+              <button
+                onClick={downloadSekolahPdf}
+                className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+              >
+                Download PDF
+              </button>
 
             </div>
 
@@ -741,6 +815,15 @@ export default function Home() {
 
               </div>
 
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                onClick={downloadAdminPdf}
+                className="rounded-2xl border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20"
+              >
+                Download PDF
+              </button>
             </div>
 
             {/* CARD STATISTIK ADMIN */}
