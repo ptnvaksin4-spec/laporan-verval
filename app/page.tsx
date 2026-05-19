@@ -303,17 +303,24 @@ export default function Home() {
     const colWidths = [40, pageW - margin * 2 - 240, 60, 60, 60];
     const cols = [margin, margin + colWidths[0], margin + colWidths[0] + colWidths[1], margin + colWidths[0] + colWidths[1] + colWidths[2], margin + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3]];
 
-    doc.setFillColor(245, 245, 245);
-    doc.rect(margin - 4, y - 14, pageW - margin * 2 + 8, 22, "F");
-    doc.setDrawColor(210, 210, 210);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(10);
-    const headers = ["No", "Sekolah", "Laki-laki", "Perempuan", "Total"];
-    headers.forEach((h, i) => {
-      const x = i === 0 ? cols[0] : cols[i];
-      doc.text(h, x + (i === 1 ? 6 : colWidths[i] - 6), y, { align: i === 1 ? "left" : "right" });
-    });
+    doc.setFillColor(235, 235, 235);
+    doc.rect(36, y - 16, 520, 24, "F");
+    doc.setDrawColor(180, 180, 180);
+    doc.setLineWidth(0.8);
+    doc.line(36, y + 10, 556, y + 10);
 
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    const headers = ["No", "Sekolah", "Laki-laki", "Perempuan", "Total"];
+    headers.forEach((header, index) => {
+      const x = cols[index];
+      const w = colWidths[index];
+      if (index === 1) {
+        doc.text(header, x + 6, y);
+      } else {
+        doc.text(header, x + w - 6, y, { align: "right" });
+      }
+    });
     y += 24;
     doc.setFont("helvetica", "normal");
 
