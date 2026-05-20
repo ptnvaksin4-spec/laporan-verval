@@ -13,7 +13,23 @@ export default function Home() {
   const [unlockSekolah, setUnlockSekolah] = useState(false);
   const [unlockAdmin, setUnlockAdmin] = useState(false);
 
+  const [currentTime, setCurrentTime] = useState("");
+  const [dataUpdateTime, setDataUpdateTime] = useState("");
+
   const KUOTA = 288;
+
+  const formatDateTime = (date: Date) => {
+    const day = String(date.getDate()).padStart(2, "0");
+    const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+    const month = bulan[date.getMonth()];
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    return `${day} ${month} ${year} • ${hours}.${minutes} WIB`;
+  };
+
+  const getCurrentTimeText = () => currentTime || formatDateTime(new Date());
+  const getDataUpdateTimeText = () => dataUpdateTime || getCurrentTimeText();
 
   // =========================
   // LOAD CSV
@@ -21,8 +37,14 @@ export default function Home() {
 
   useEffect(() => {
 
-    fetch("/laporan.csv")
-      .then((res) => res.text())
+    fetch(`/laporan.csv?t=${Date.now()}`, { cache: "no-store" })
+      .then((res) => {
+        const lastModified = res.headers.get("last-modified");
+        if (lastModified) {
+          setDataUpdateTime(formatDateTime(new Date(lastModified)));
+        }
+        return res.text();
+      })
       .then((text) => {
 
         const rows = text
@@ -48,6 +70,21 @@ export default function Home() {
 
       });
 
+  }, []);
+
+  // =========================
+  // UPDATE TIME
+  // =========================
+
+  useEffect(() => {
+    const updateTime = () => {
+      setCurrentTime(formatDateTime(new Date()));
+    };
+
+    updateTime();
+    const interval = setInterval(updateTime, 60000);
+
+    return () => clearInterval(interval);
   }, []);
 
   // =========================
@@ -284,7 +321,7 @@ export default function Home() {
   const downloadSekolahPdf = () => {
     const doc = new jsPDF({ unit: "pt", format: "a4" });
     const title = "Rekap Sekolah";
-    const date = "19 Mei 2026 • 20.00 WIB";
+    const date = getDataUpdateTimeText();
 
     const pageW = doc.internal.pageSize.getWidth();
     const pageH = doc.internal.pageSize.getHeight();
@@ -394,7 +431,7 @@ export default function Home() {
   const downloadAdminPdf = () => {
     const doc = new jsPDF({ unit: "pt", format: "a4", orientation: "landscape" });
     const title = "Rekap Admin";
-    const date = "19 Mei 2026 • 20.00 WIB";
+    const date = getDataUpdateTimeText();
 
     const pageW = doc.internal.pageSize.getWidth();
     const pageH = doc.internal.pageSize.getHeight();
@@ -554,7 +591,7 @@ export default function Home() {
           </p>
 
           <p className="text-blue-200 mt-2 text-xs md:text-sm">
-            Update data: 19 Mei 2026 • 20.00 WIB
+            Update data: {getDataUpdateTimeText() || "Loading..."}
           </p>
 
         </div>
@@ -946,7 +983,7 @@ export default function Home() {
                       </div>
 
                       <div className="text-xs font-semibold mt-1">
-                        19 Mei 2026 • 20.00 WIB
+                        {getDataUpdateTimeText()}
                       </div>
 
                     </div>
