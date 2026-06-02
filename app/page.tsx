@@ -12,10 +12,17 @@ export default function Home() {
 
   const [unlockSekolah, setUnlockSekolah] = useState(false);
   const [unlockAdmin, setUnlockAdmin] = useState(false);
+  const [unlockJurusan, setUnlockJurusan] = useState(false);
 
   const [currentTime, setCurrentTime] = useState("");
+  
+  // Password modal state
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [passwordTarget, setPasswordTarget] = useState("");
 
   const KUOTA = 288;
+  const KUOTA_JURUSAN = 72;
 
   // =========================
   // LOAD CSV
@@ -255,164 +262,291 @@ export default function Home() {
     jurusanList.forEach((jurusan) => {
       jurusanMap.set(jurusan, {
         nama: jurusan,
-        laki: 0,
-        perempuan: 0,
-        total: 0,
+        pilihan1: {
+          laki: 0,
+          perempuan: 0,
+          total: 0,
+        },
+        pilihan2: {
+          laki: 0,
+          perempuan: 0,
+          total: 0,
+        },
+        kuota: KUOTA_JURUSAN,
       });
     });
 
     data.forEach((item) => {
+      // Pilihan 1
       const jurusanKey = Object.keys(item).find(
-        (k) => k.toLowerCase().includes("jurusan")
+        (k) => k.toLowerCase().includes("jurusan") && !k.toLowerCase().includes("kedua")
       );
 
-      const namaJurusan = jurusanKey
+      const namaJurusan1 = jurusanKey
         ? String(item[jurusanKey] ?? "").trim()
         : "";
 
-      if (!namaJurusan || !jurusanMap.has(namaJurusan)) return;
+      if (namaJurusan1 && jurusanMap.has(namaJurusan1)) {
+        const jkKey = Object.keys(item).find(
+          (k) =>
+            k.toLowerCase().includes("kelamin") ||
+            k.toLowerCase() === "jk"
+        );
 
-      const jkKey = Object.keys(item).find(
-        (k) =>
-          k.toLowerCase().includes("kelamin") ||
-          k.toLowerCase() === "jk"
+        const jk = jkKey
+          ? String(item[jkKey]).toLowerCase()
+          : "";
+
+        const jurusan1: any = jurusanMap.get(namaJurusan1);
+
+        if (jk === "l" || jk.includes("laki")) {
+          jurusan1.pilihan1.laki += 1;
+        }
+
+        if (jk === "p" || jk.includes("perempuan")) {
+          jurusan1.pilihan1.perempuan += 1;
+        }
+
+        jurusan1.pilihan1.total += 1;
+      }
+
+      // Pilihan 2
+      const pilihanKeduaKey = Object.keys(item).find(
+        (k) => k.toLowerCase().includes("kedua")
       );
 
-      const jk = jkKey
-        ? String(item[jkKey]).toLowerCase()
+      const namaJurusan2 = pilihanKeduaKey
+        ? String(item[pilihanKeduaKey] ?? "").trim()
         : "";
 
-      const jurusan: any = jurusanMap.get(namaJurusan);
+      if (namaJurusan2 && jurusanMap.has(namaJurusan2)) {
+        const jkKey = Object.keys(item).find(
+          (k) =>
+            k.toLowerCase().includes("kelamin") ||
+            k.toLowerCase() === "jk"
+        );
 
-      if (
-        jk === "l" ||
-        jk.includes("laki")
-      ) {
-        jurusan.laki += 1;
+        const jk = jkKey
+          ? String(item[jkKey]).toLowerCase()
+          : "";
+
+        const jurusan2: any = jurusanMap.get(namaJurusan2);
+
+        if (jk === "l" || jk.includes("laki")) {
+          jurusan2.pilihan2.laki += 1;
+        }
+
+        if (jk === "p" || jk.includes("perempuan")) {
+          jurusan2.pilihan2.perempuan += 1;
+        }
+
+        jurusan2.pilihan2.total += 1;
       }
-
-      if (
-        jk === "p" ||
-        jk.includes("perempuan")
-      ) {
-        jurusan.perempuan += 1;
-      }
-
-      jurusan.total += 1;
     });
 
-    return Array.from(jurusanMap.values());
+    return Array.from(jurusanMap.values()).map((item: any) => ({
+      ...item,
+      selisih1: item.pilihan1.total - item.kuota,
+      persentase1: ((item.pilihan1.total / item.kuota) * 100).toFixed(2),
+      selisih2: item.pilihan2.total - item.kuota,
+      persentase2: ((item.pilihan2.total / item.kuota) * 100).toFixed(2),
+    }));
 
   }, [data]);
 
   const downloadJurusanPdf = () => {
-    const doc = new jsPDF({ unit: "pt", format: "a4" });
-    const title = "Rekap Jurusan";
-    const date = currentTime || "20 Mei 2026 • 20.00 WIB";
+    const doc = new jsPDF({ unit: "pt", format: "a4", orientation: "landscape" });
+    const title = "Rekap Jurusan dengan Pilihan Kedua";
+    const date = currentTime || "02 Juni 2026 • 21.00 WIB";
 
     const pageW = doc.internal.pageSize.getWidth();
     const pageH = doc.internal.pageSize.getHeight();
     const margin = 40;
-    let y = 56;
+    let y = 50;
 
-    // Header
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
+    doc.setFontSize(16);
     doc.text(title, pageW / 2, y, { align: "center" });
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.text(date, pageW - margin, y, { align: "right" });
 
-    y += 18;
+    y += 20;
+    doc.setLineWidth(1);
     doc.setDrawColor(50, 100, 160);
-    doc.setLineWidth(2);
     doc.line(margin, y, pageW - margin, y);
 
-    y += 18;
-    doc.setFontSize(11);
-    doc.setTextColor(80, 80, 80);
-    doc.text("Ringkasan rekapitulasi jumlah pemilih per jurusan.", margin, y);
-    doc.setTextColor(0, 0, 0);
+    y += 20;
 
-    y += 28;
+    const colWidth = (pageW - margin * 2) / 7;
+    const cols = [
+      margin,
+      margin + colWidth,
+      margin + colWidth * 2,
+      margin + colWidth * 3,
+      margin + colWidth * 4,
+      margin + colWidth * 5,
+      margin + colWidth * 6,
+    ];
 
-    const colWidths = [40, pageW - margin * 2 - 240, 60, 60, 60];
-    const cols = [margin, margin + colWidths[0], margin + colWidths[0] + colWidths[1], margin + colWidths[0] + colWidths[1] + colWidths[2], margin + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3]];
-
-    doc.setFillColor(32, 56, 100);
-    doc.rect(margin - 6, y - 14, pageW - margin * 2 + 12, 24, "F");
+    // Table for first choice
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
+    doc.text("PILIHAN PERTAMA", margin, y);
+    y += 15;
+
+    doc.setFillColor(32, 56, 100);
+    doc.rect(margin - 3, y - 12, pageW - margin * 2 + 6, 18, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
     doc.setTextColor(255, 255, 255);
-    const headers = ["No", "Jurusan", "Laki-laki", "Perempuan", "Total"];
-    headers.forEach((header, index) => {
-      const x = cols[index];
-      const w = colWidths[index];
-      if (index === 1) {
-        doc.text(header, x + 6, y);
-      } else {
-        doc.text(header, x + w - 6, y, { align: "right" });
-      }
+
+    const headers1 = ["Jurusan", "Laki", "Perempuan", "Total", "Kuota", "Selisih", "Persentase"];
+    headers1.forEach((header, index) => {
+      doc.text(header, cols[index] + 4, y + 6, { align: "left" });
     });
 
-    y += 24;
+    y += 18;
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
+    doc.setFontSize(8);
     doc.setTextColor(30, 30, 30);
 
-    let sumLaki = 0;
-    let sumPerempuan = 0;
-    let sumTotal = 0;
+    let sumLaki1 = 0, sumPerempuan1 = 0, sumTotal1 = 0;
 
     rekapJurusan.forEach((item: any, idx: number) => {
-      if (y > pageH - margin - 80) {
+      if (y > pageH - margin - 60) {
         doc.addPage();
         y = margin + 30;
       }
 
       if (idx % 2 === 0) {
         doc.setFillColor(245, 247, 252);
-        doc.rect(margin - 6, y - 12, pageW - margin * 2 + 12, 18, "F");
+        doc.rect(margin - 3, y - 10, pageW - margin * 2 + 6, 14, "F");
       }
 
-      doc.text(String(idx + 1), cols[0] + colWidths[0] - 6, y, { align: "right" });
-      doc.text(item.nama, cols[1] + 6, y, { maxWidth: colWidths[1] - 10 });
-      doc.text(String(item.laki), cols[2] + colWidths[2] - 6, y, { align: "right" });
-      doc.text(String(item.perempuan), cols[3] + colWidths[3] - 6, y, { align: "right" });
-      doc.text(String(item.total), cols[4] + colWidths[4] - 6, y, { align: "right" });
+      doc.text(item.nama.substring(0, 20), cols[0] + 4, y + 3);
+      doc.text(String(item.pilihan1.laki), cols[1] + 4, y + 3);
+      doc.text(String(item.pilihan1.perempuan), cols[2] + 4, y + 3);
+      doc.text(String(item.pilihan1.total), cols[3] + 4, y + 3);
+      doc.text(String(item.kuota), cols[4] + 4, y + 3);
+      doc.setTextColor(item.selisih1 > 0 ? 255 : 0, item.selisih1 > 0 ? 0 : 128, 0);
+      doc.text(
+        String(item.selisih1),
+        cols[5] + 4,
+        y + 3
+      );
+      doc.setTextColor(30, 30, 30);
+      doc.text(String(item.persentase1) + "%", cols[6] + 4, y + 3);
 
-      doc.setDrawColor(220, 220, 220);
-      doc.setLineWidth(0.4);
-      doc.line(margin - 6, y + 8, pageW - margin + 6, y + 8);
+      sumLaki1 += Number(item.pilihan1.laki) || 0;
+      sumPerempuan1 += Number(item.pilihan1.perempuan) || 0;
+      sumTotal1 += Number(item.pilihan1.total) || 0;
 
-      sumLaki += Number(item.laki) || 0;
-      sumPerempuan += Number(item.perempuan) || 0;
-      sumTotal += Number(item.total) || 0;
-
-      y += 18;
+      y += 14;
     });
 
-    if (y > pageH - margin - 40) {
-      doc.addPage();
-      y = margin + 30;
-    }
-
-    doc.setFillColor(240, 240, 240);
-    doc.rect(margin - 6, y - 12, pageW - margin * 2 + 12, 22, "F");
+    // Table for second choice
+    y += 15;
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(20, 20, 20);
-    doc.text("TOTAL", cols[1] + 6, y);
-    doc.text(String(sumLaki), cols[2] + colWidths[2] - 6, y, { align: "right" });
-    doc.text(String(sumPerempuan), cols[3] + colWidths[3] - 6, y, { align: "right" });
-    doc.text(String(sumTotal), cols[4] + colWidths[4] - 6, y, { align: "right" });
+    doc.setFontSize(11);
+    doc.text("PILIHAN KEDUA (ALTERNATIF)", margin, y);
+    y += 15;
 
-    y += 36;
-    doc.setFont("helvetica", "normal");
+    doc.setFillColor(32, 56, 100);
+    doc.rect(margin - 3, y - 12, pageW - margin * 2 + 6, 18, "F");
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(9);
+    doc.setTextColor(255, 255, 255);
+
+    const headers2 = ["Jurusan", "Laki", "Perempuan", "Total", "Kuota", "Selisih", "Persentase"];
+    headers2.forEach((header, index) => {
+      doc.text(header, cols[index] + 4, y + 6, { align: "left" });
+    });
+
+    y += 18;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setTextColor(30, 30, 30);
+
+    let sumLaki2 = 0, sumPerempuan2 = 0, sumTotal2 = 0;
+
+    rekapJurusan.forEach((item: any, idx: number) => {
+      if (y > pageH - margin - 40) {
+        doc.addPage();
+        y = margin + 30;
+      }
+
+      if (idx % 2 === 0) {
+        doc.setFillColor(245, 247, 252);
+        doc.rect(margin - 3, y - 10, pageW - margin * 2 + 6, 14, "F");
+      }
+
+      doc.text(item.nama.substring(0, 20), cols[0] + 4, y + 3);
+      doc.text(String(item.pilihan2.laki), cols[1] + 4, y + 3);
+      doc.text(String(item.pilihan2.perempuan), cols[2] + 4, y + 3);
+      doc.text(String(item.pilihan2.total), cols[3] + 4, y + 3);
+      doc.text(String(item.kuota), cols[4] + 4, y + 3);
+      doc.setTextColor(item.selisih2 > 0 ? 255 : 0, item.selisih2 > 0 ? 0 : 128, 0);
+      doc.text(
+        String(item.selisih2),
+        cols[5] + 4,
+        y + 3
+      );
+      doc.setTextColor(30, 30, 30);
+      doc.text(String(item.persentase2) + "%", cols[6] + 4, y + 3);
+
+      sumLaki2 += Number(item.pilihan2.laki) || 0;
+      sumPerempuan2 += Number(item.pilihan2.perempuan) || 0;
+      sumTotal2 += Number(item.pilihan2.total) || 0;
+
+      y += 14;
+    });
+
+    y += 20;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
     doc.setTextColor(100, 100, 100);
     doc.text(`Generated by Pra SMPB Reporting • ${date}`, margin, pageH - margin + 10);
 
     doc.save("rekap-jurusan.pdf");
+  };
+
+  const downloadJurusanExcel = () => {
+    const XLSX = require("xlsx");
+    
+    const wb = XLSX.utils.book_new();
+
+    // First choice sheet
+    const data1 = rekapJurusan.map((item: any, idx: number) => ({
+      No: idx + 1,
+      "Nama Jurusan": item.nama,
+      "Laki-laki": item.pilihan1.laki,
+      Perempuan: item.pilihan1.perempuan,
+      Total: item.pilihan1.total,
+      Kuota: item.kuota,
+      Selisih: item.selisih1,
+      "Persentase (%)": item.persentase1,
+    }));
+
+    const ws1 = XLSX.utils.json_to_sheet(data1);
+    XLSX.utils.book_append_sheet(wb, ws1, "Pilihan Pertama");
+
+    // Second choice sheet
+    const data2 = rekapJurusan.map((item: any, idx: number) => ({
+      No: idx + 1,
+      "Nama Jurusan": item.nama,
+      "Laki-laki": item.pilihan2.laki,
+      Perempuan: item.pilihan2.perempuan,
+      Total: item.pilihan2.total,
+      Kuota: item.kuota,
+      Selisih: item.selisih2,
+      "Persentase (%)": item.persentase2,
+    }));
+
+    const ws2 = XLSX.utils.json_to_sheet(data2);
+    XLSX.utils.book_append_sheet(wb, ws2, "Pilihan Kedua");
+
+    XLSX.writeFile(wb, "rekap-jurusan.xlsx");
   };
 
   // =========================
@@ -705,18 +839,9 @@ export default function Home() {
       return;
     }
 
-    const kode = prompt("Masukkan kode akses");
-
-    if (kode === "20607872") {
-
-      setUnlockSekolah(true);
-      setMenu("sekolah");
-
-    } else {
-
-      alert("Kode akses salah");
-
-    }
+    setPasswordTarget("sekolah");
+    setPasswordInput("");
+    setShowPasswordModal(true);
 
   };
 
@@ -727,19 +852,42 @@ export default function Home() {
       return;
     }
 
-    const kode = prompt("Masukkan kode admin");
+    setPasswordTarget("admin");
+    setPasswordInput("");
+    setShowPasswordModal(true);
 
-    if (kode === "999666") {
+  };
 
-      setUnlockAdmin(true);
-      setMenu("admin");
+  const handleOpenJurusan = () => {
 
-    } else {
-
-      alert("Kode admin salah");
-
+    if (unlockJurusan) {
+      setMenu("jurusan");
+      return;
     }
 
+    setPasswordTarget("jurusan");
+    setPasswordInput("");
+    setShowPasswordModal(true);
+
+  };
+
+  const handlePasswordSubmit = () => {
+    if (passwordTarget === "sekolah" && passwordInput === "20607872") {
+      setUnlockSekolah(true);
+      setMenu("sekolah");
+      setShowPasswordModal(false);
+    } else if (passwordTarget === "admin" && passwordInput === "999666") {
+      setUnlockAdmin(true);
+      setMenu("admin");
+      setShowPasswordModal(false);
+    } else if (passwordTarget === "jurusan" && passwordInput === "999666") {
+      setUnlockJurusan(true);
+      setMenu("jurusan");
+      setShowPasswordModal(false);
+    } else {
+      alert("Password salah");
+      setPasswordInput("");
+    }
   };
 
   return (
@@ -779,14 +927,14 @@ export default function Home() {
           </button>
 
           <button
-            onClick={() => setMenu("jurusan")}
+            onClick={handleOpenJurusan}
             className={`px-5 py-3 rounded-2xl text-sm font-semibold transition-all ${
               menu === "jurusan"
                 ? "bg-blue-600 text-white"
                 : "bg-white text-slate-700 border border-slate-200"
             }`}
           >
-            📚 Rekap Jurusan
+            🔒 Rekap Jurusan
           </button>
 
           <button
@@ -928,91 +1076,183 @@ export default function Home() {
         {/* REKAP JURUSAN */}
         {menu === "jurusan" && (
 
-          <div className="bg-white rounded-[32px] border border-slate-200 shadow-xl overflow-hidden">
+          <div className="space-y-6">
 
-            <div className="px-6 py-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between gap-4">
-
-              <h2 className="text-2xl font-bold text-slate-800">
-                📚 Rekap Jurusan
-              </h2>
-
-              <button
-                onClick={downloadJurusanPdf}
-                className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
-              >
-                Download PDF
-              </button>
-
+            {/* HEADER */}
+            <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-[28px] p-6 text-white shadow-xl">
+              <h2 className="text-3xl font-bold mb-2">📚 Rekap Jurusan</h2>
+              <p className="text-green-100">Rekapitulasi pemilihan jurusan dengan pilihan alternatif</p>
             </div>
 
-            <div className="overflow-auto">
+            {/* DOWNLOAD BUTTONS */}
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={downloadJurusanPdf}
+                className="rounded-2xl bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-2 text-sm font-semibold hover:shadow-lg transition-all"
+              >
+                📥 Download PDF
+              </button>
+              <button
+                onClick={downloadJurusanExcel}
+                className="rounded-2xl bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-2 text-sm font-semibold hover:shadow-lg transition-all"
+              >
+                📥 Download Excel
+              </button>
+            </div>
 
-              <table className="w-full min-w-[700px]">
+            {/* PILIHAN PERTAMA */}
+            <div className="bg-white rounded-[28px] border border-slate-200 shadow-xl overflow-hidden">
 
-                <thead className="bg-slate-100">
+              <div className="px-6 py-5 border-b border-slate-200 bg-gradient-to-r from-blue-50 to-blue-100">
+                <h3 className="text-2xl font-bold text-slate-800">
+                  🎯 Pilihan Pertama
+                </h3>
+              </div>
 
-                  <tr>
+              <div className="overflow-auto">
 
-                    <th className="px-6 py-4 text-left">
-                      No
-                    </th>
+                <table className="w-full min-w-[1000px]">
 
-                    <th className="px-6 py-4 text-left">
-                      Nama Jurusan
-                    </th>
+                  <thead className="bg-blue-100">
 
-                    <th className="px-6 py-4 text-center">
-                      👨 Laki-Laki
-                    </th>
+                    <tr>
 
-                    <th className="px-6 py-4 text-center">
-                      👩 Perempuan
-                    </th>
+                      <th className="px-6 py-4 text-left">No</th>
 
-                    <th className="px-6 py-4 text-center">
-                      📋 Total Pemilih
-                    </th>
+                      <th className="px-6 py-4 text-left">Nama Jurusan</th>
 
-                  </tr>
+                      <th className="px-6 py-4 text-center">👨 Laki-Laki</th>
 
-                </thead>
+                      <th className="px-6 py-4 text-center">👩 Perempuan</th>
 
-                <tbody>
+                      <th className="px-6 py-4 text-center">Total</th>
 
-                  {rekapJurusan.map((item: any, index) => (
+                      <th className="px-6 py-4 text-center">Kuota</th>
 
-                    <tr
-                      key={index}
-                      className="border-t border-slate-100 hover:bg-slate-50"
-                    >
+                      <th className="px-6 py-4 text-center">Selisih</th>
 
-                      <td className="px-6 py-4">
-                        {index + 1}
-                      </td>
-
-                      <td className="px-6 py-4 font-semibold">
-                        {item.nama}
-                      </td>
-
-                      <td className="px-6 py-4 text-center">
-                        {item.laki}
-                      </td>
-
-                      <td className="px-6 py-4 text-center">
-                        {item.perempuan}
-                      </td>
-
-                      <td className="px-6 py-4 text-center font-bold text-blue-600">
-                        {item.total}
-                      </td>
+                      <th className="px-6 py-4 text-center">Persentase (%)</th>
 
                     </tr>
 
-                  ))}
+                  </thead>
 
-                </tbody>
+                  <tbody>
 
-              </table>
+                    {rekapJurusan.map((item: any, index) => (
+
+                      <tr
+                        key={index}
+                        className="border-t border-slate-100 hover:bg-slate-50"
+                      >
+
+                        <td className="px-6 py-4">{index + 1}</td>
+
+                        <td className="px-6 py-4 font-semibold">{item.nama}</td>
+
+                        <td className="px-6 py-4 text-center">{item.pilihan1.laki}</td>
+
+                        <td className="px-6 py-4 text-center">{item.pilihan1.perempuan}</td>
+
+                        <td className="px-6 py-4 text-center font-bold text-blue-600">{item.pilihan1.total}</td>
+
+                        <td className="px-6 py-4 text-center font-semibold">{item.kuota}</td>
+
+                        <td className={`px-6 py-4 text-center font-bold ${
+                          item.selisih1 > 0 ? 'text-red-600' : 'text-green-600'
+                        }`}>
+                          {item.selisih1 > 0 ? '+' : ''}{item.selisih1}
+                        </td>
+
+                        <td className="px-6 py-4 text-center font-semibold">{item.persentase1}%</td>
+
+                      </tr>
+
+                    ))}
+
+                  </tbody>
+
+                </table>
+
+              </div>
+
+            </div>
+
+            {/* PILIHAN KEDUA */}
+            <div className="bg-white rounded-[28px] border border-slate-200 shadow-xl overflow-hidden">
+
+              <div className="px-6 py-5 border-b border-slate-200 bg-gradient-to-r from-purple-50 to-purple-100">
+                <h3 className="text-2xl font-bold text-slate-800">
+                  🔄 Pilihan Kedua (Alternatif)
+                </h3>
+              </div>
+
+              <div className="overflow-auto">
+
+                <table className="w-full min-w-[1000px]">
+
+                  <thead className="bg-purple-100">
+
+                    <tr>
+
+                      <th className="px-6 py-4 text-left">No</th>
+
+                      <th className="px-6 py-4 text-left">Nama Jurusan</th>
+
+                      <th className="px-6 py-4 text-center">👨 Laki-Laki</th>
+
+                      <th className="px-6 py-4 text-center">👩 Perempuan</th>
+
+                      <th className="px-6 py-4 text-center">Total</th>
+
+                      <th className="px-6 py-4 text-center">Kuota</th>
+
+                      <th className="px-6 py-4 text-center">Selisih</th>
+
+                      <th className="px-6 py-4 text-center">Persentase (%)</th>
+
+                    </tr>
+
+                  </thead>
+
+                  <tbody>
+
+                    {rekapJurusan.map((item: any, index) => (
+
+                      <tr
+                        key={index}
+                        className="border-t border-slate-100 hover:bg-slate-50"
+                      >
+
+                        <td className="px-6 py-4">{index + 1}</td>
+
+                        <td className="px-6 py-4 font-semibold">{item.nama}</td>
+
+                        <td className="px-6 py-4 text-center">{item.pilihan2.laki}</td>
+
+                        <td className="px-6 py-4 text-center">{item.pilihan2.perempuan}</td>
+
+                        <td className="px-6 py-4 text-center font-bold text-purple-600">{item.pilihan2.total}</td>
+
+                        <td className="px-6 py-4 text-center font-semibold">{item.kuota}</td>
+
+                        <td className={`px-6 py-4 text-center font-bold ${
+                          item.selisih2 > 0 ? 'text-red-600' : 'text-green-600'
+                        }`}>
+                          {item.selisih2 > 0 ? '+' : ''}{item.selisih2}
+                        </td>
+
+                        <td className="px-6 py-4 text-center font-semibold">{item.persentase2}%</td>
+
+                      </tr>
+
+                    ))}
+
+                  </tbody>
+
+                </table>
+
+              </div>
 
             </div>
 
@@ -1437,6 +1677,38 @@ export default function Home() {
         )}
 
       </div>
+
+      {/* PASSWORD MODAL */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-[28px] p-8 shadow-2xl max-w-md w-full mx-4">
+            <h3 className="text-2xl font-bold text-slate-800 mb-4">🔐 Masukkan Password</h3>
+            <input
+              type="password"
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && handlePasswordSubmit()}
+              placeholder="Password"
+              className="w-full px-4 py-3 border border-slate-200 rounded-2xl mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              autoFocus
+            />
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowPasswordModal(false)}
+                className="flex-1 px-4 py-3 rounded-2xl border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition-all"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handlePasswordSubmit}
+                className="flex-1 px-4 py-3 rounded-2xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-all"
+              >
+                Buka
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </main>
   );
