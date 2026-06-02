@@ -14,22 +14,8 @@ export default function Home() {
   const [unlockAdmin, setUnlockAdmin] = useState(false);
 
   const [currentTime, setCurrentTime] = useState("");
-  const [dataUpdateTime, setDataUpdateTime] = useState("");
 
   const KUOTA = 288;
-
-  const formatDateTime = (date: Date) => {
-    const day = String(date.getDate()).padStart(2, "0");
-    const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-    const month = bulan[date.getMonth()];
-    const year = date.getFullYear();
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    return `${day} ${month} ${year} • ${hours}.${minutes} WIB`;
-  };
-
-  const getCurrentTimeText = () => currentTime || formatDateTime(new Date());
-  const getDataUpdateTimeText = () => dataUpdateTime || getCurrentTimeText();
 
   // =========================
   // LOAD CSV
@@ -37,14 +23,8 @@ export default function Home() {
 
   useEffect(() => {
 
-    fetch(`/laporan.csv?t=${Date.now()}`, { cache: "no-store" })
-      .then((res) => {
-        const lastModified = res.headers.get("last-modified");
-        if (lastModified) {
-          setDataUpdateTime(formatDateTime(new Date(lastModified)));
-        }
-        return res.text();
-      })
+    fetch("/laporan.csv")
+      .then((res) => res.text())
       .then((text) => {
 
         const rows = text
@@ -78,7 +58,17 @@ export default function Home() {
 
   useEffect(() => {
     const updateTime = () => {
-      setCurrentTime(formatDateTime(new Date()));
+      const now = new Date();
+      const day = String(now.getDate()).padStart(2, "0");
+      
+      const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", 
+                     "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+      const month = bulan[now.getMonth()];
+      
+      const year = now.getFullYear();
+      const hours = String(now.getHours()).padStart(2, "0");
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+      setCurrentTime(`${day} ${month} ${year} • ${hours}.${minutes} WIB`);
     };
 
     updateTime();
@@ -248,6 +238,184 @@ export default function Home() {
   }).length;
 
   // =========================
+  // REKAP JURUSAN
+  // =========================
+
+  const rekapJurusan = useMemo(() => {
+
+    const jurusanMap = new Map();
+
+    const jurusanList = [
+      "Teknik Komputer dan Jaringan",
+      "Akuntansi",
+      "Bisnis Digital",
+      "Teknik Mesin"
+    ];
+
+    jurusanList.forEach((jurusan) => {
+      jurusanMap.set(jurusan, {
+        nama: jurusan,
+        laki: 0,
+        perempuan: 0,
+        total: 0,
+      });
+    });
+
+    data.forEach((item) => {
+      const jurusanKey = Object.keys(item).find(
+        (k) => k.toLowerCase().includes("jurusan")
+      );
+
+      const namaJurusan = jurusanKey
+        ? String(item[jurusanKey] ?? "").trim()
+        : "";
+
+      if (!namaJurusan || !jurusanMap.has(namaJurusan)) return;
+
+      const jkKey = Object.keys(item).find(
+        (k) =>
+          k.toLowerCase().includes("kelamin") ||
+          k.toLowerCase() === "jk"
+      );
+
+      const jk = jkKey
+        ? String(item[jkKey]).toLowerCase()
+        : "";
+
+      const jurusan: any = jurusanMap.get(namaJurusan);
+
+      if (
+        jk === "l" ||
+        jk.includes("laki")
+      ) {
+        jurusan.laki += 1;
+      }
+
+      if (
+        jk === "p" ||
+        jk.includes("perempuan")
+      ) {
+        jurusan.perempuan += 1;
+      }
+
+      jurusan.total += 1;
+    });
+
+    return Array.from(jurusanMap.values());
+
+  }, [data]);
+
+  const downloadJurusanPdf = () => {
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+    const title = "Rekap Jurusan";
+    const date = currentTime || "20 Mei 2026 • 20.00 WIB";
+
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const margin = 40;
+    let y = 56;
+
+    // Header
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text(title, pageW / 2, y, { align: "center" });
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text(date, pageW - margin, y, { align: "right" });
+
+    y += 18;
+    doc.setDrawColor(50, 100, 160);
+    doc.setLineWidth(2);
+    doc.line(margin, y, pageW - margin, y);
+
+    y += 18;
+    doc.setFontSize(11);
+    doc.setTextColor(80, 80, 80);
+    doc.text("Ringkasan rekapitulasi jumlah pemilih per jurusan.", margin, y);
+    doc.setTextColor(0, 0, 0);
+
+    y += 28;
+
+    const colWidths = [40, pageW - margin * 2 - 240, 60, 60, 60];
+    const cols = [margin, margin + colWidths[0], margin + colWidths[0] + colWidths[1], margin + colWidths[0] + colWidths[1] + colWidths[2], margin + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3]];
+
+    doc.setFillColor(32, 56, 100);
+    doc.rect(margin - 6, y - 14, pageW - margin * 2 + 12, 24, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.setTextColor(255, 255, 255);
+    const headers = ["No", "Jurusan", "Laki-laki", "Perempuan", "Total"];
+    headers.forEach((header, index) => {
+      const x = cols[index];
+      const w = colWidths[index];
+      if (index === 1) {
+        doc.text(header, x + 6, y);
+      } else {
+        doc.text(header, x + w - 6, y, { align: "right" });
+      }
+    });
+
+    y += 24;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(30, 30, 30);
+
+    let sumLaki = 0;
+    let sumPerempuan = 0;
+    let sumTotal = 0;
+
+    rekapJurusan.forEach((item: any, idx: number) => {
+      if (y > pageH - margin - 80) {
+        doc.addPage();
+        y = margin + 30;
+      }
+
+      if (idx % 2 === 0) {
+        doc.setFillColor(245, 247, 252);
+        doc.rect(margin - 6, y - 12, pageW - margin * 2 + 12, 18, "F");
+      }
+
+      doc.text(String(idx + 1), cols[0] + colWidths[0] - 6, y, { align: "right" });
+      doc.text(item.nama, cols[1] + 6, y, { maxWidth: colWidths[1] - 10 });
+      doc.text(String(item.laki), cols[2] + colWidths[2] - 6, y, { align: "right" });
+      doc.text(String(item.perempuan), cols[3] + colWidths[3] - 6, y, { align: "right" });
+      doc.text(String(item.total), cols[4] + colWidths[4] - 6, y, { align: "right" });
+
+      doc.setDrawColor(220, 220, 220);
+      doc.setLineWidth(0.4);
+      doc.line(margin - 6, y + 8, pageW - margin + 6, y + 8);
+
+      sumLaki += Number(item.laki) || 0;
+      sumPerempuan += Number(item.perempuan) || 0;
+      sumTotal += Number(item.total) || 0;
+
+      y += 18;
+    });
+
+    if (y > pageH - margin - 40) {
+      doc.addPage();
+      y = margin + 30;
+    }
+
+    doc.setFillColor(240, 240, 240);
+    doc.rect(margin - 6, y - 12, pageW - margin * 2 + 12, 22, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(20, 20, 20);
+    doc.text("TOTAL", cols[1] + 6, y);
+    doc.text(String(sumLaki), cols[2] + colWidths[2] - 6, y, { align: "right" });
+    doc.text(String(sumPerempuan), cols[3] + colWidths[3] - 6, y, { align: "right" });
+    doc.text(String(sumTotal), cols[4] + colWidths[4] - 6, y, { align: "right" });
+
+    y += 36;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Generated by Pra SMPB Reporting • ${date}`, margin, pageH - margin + 10);
+
+    doc.save("rekap-jurusan.pdf");
+  };
+
+  // =========================
   // REKAP SEKOLAH
   // =========================
 
@@ -321,7 +489,7 @@ export default function Home() {
   const downloadSekolahPdf = () => {
     const doc = new jsPDF({ unit: "pt", format: "a4" });
     const title = "Rekap Sekolah";
-    const date = getDataUpdateTimeText();
+    const date = "20 Mei 2026 • 20.00 WIB";
 
     const pageW = doc.internal.pageSize.getWidth();
     const pageH = doc.internal.pageSize.getHeight();
@@ -431,7 +599,7 @@ export default function Home() {
   const downloadAdminPdf = () => {
     const doc = new jsPDF({ unit: "pt", format: "a4", orientation: "landscape" });
     const title = "Rekap Admin";
-    const date = getDataUpdateTimeText();
+    const date = "19 Mei 2026 • 20.00 WIB";
 
     const pageW = doc.internal.pageSize.getWidth();
     const pageH = doc.internal.pageSize.getHeight();
@@ -591,7 +759,7 @@ export default function Home() {
           </p>
 
           <p className="text-blue-200 mt-2 text-xs md:text-sm">
-            Update data: {getDataUpdateTimeText() || "Loading..."}
+            Update data: {currentTime || "Loading..."}
           </p>
 
         </div>
@@ -608,6 +776,17 @@ export default function Home() {
             }`}
           >
             Dashboard
+          </button>
+
+          <button
+            onClick={() => setMenu("jurusan")}
+            className={`px-5 py-3 rounded-2xl text-sm font-semibold transition-all ${
+              menu === "jurusan"
+                ? "bg-blue-600 text-white"
+                : "bg-white text-slate-700 border border-slate-200"
+            }`}
+          >
+            📚 Rekap Jurusan
           </button>
 
           <button
@@ -743,6 +922,101 @@ export default function Home() {
 
             )}
           </>
+
+        )}
+
+        {/* REKAP JURUSAN */}
+        {menu === "jurusan" && (
+
+          <div className="bg-white rounded-[32px] border border-slate-200 shadow-xl overflow-hidden">
+
+            <div className="px-6 py-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between gap-4">
+
+              <h2 className="text-2xl font-bold text-slate-800">
+                📚 Rekap Jurusan
+              </h2>
+
+              <button
+                onClick={downloadJurusanPdf}
+                className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+              >
+                Download PDF
+              </button>
+
+            </div>
+
+            <div className="overflow-auto">
+
+              <table className="w-full min-w-[700px]">
+
+                <thead className="bg-slate-100">
+
+                  <tr>
+
+                    <th className="px-6 py-4 text-left">
+                      No
+                    </th>
+
+                    <th className="px-6 py-4 text-left">
+                      Nama Jurusan
+                    </th>
+
+                    <th className="px-6 py-4 text-center">
+                      👨 Laki-Laki
+                    </th>
+
+                    <th className="px-6 py-4 text-center">
+                      👩 Perempuan
+                    </th>
+
+                    <th className="px-6 py-4 text-center">
+                      📋 Total Pemilih
+                    </th>
+
+                  </tr>
+
+                </thead>
+
+                <tbody>
+
+                  {rekapJurusan.map((item: any, index) => (
+
+                    <tr
+                      key={index}
+                      className="border-t border-slate-100 hover:bg-slate-50"
+                    >
+
+                      <td className="px-6 py-4">
+                        {index + 1}
+                      </td>
+
+                      <td className="px-6 py-4 font-semibold">
+                        {item.nama}
+                      </td>
+
+                      <td className="px-6 py-4 text-center">
+                        {item.laki}
+                      </td>
+
+                      <td className="px-6 py-4 text-center">
+                        {item.perempuan}
+                      </td>
+
+                      <td className="px-6 py-4 text-center font-bold text-blue-600">
+                        {item.total}
+                      </td>
+
+                    </tr>
+
+                  ))}
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </div>
 
         )}
 
@@ -983,7 +1257,7 @@ export default function Home() {
                       </div>
 
                       <div className="text-xs font-semibold mt-1">
-                        {getDataUpdateTimeText()}
+                        20 Mei 2026 • 20.00 WIB
                       </div>
 
                     </div>
