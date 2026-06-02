@@ -250,8 +250,6 @@ export default function Home() {
 
   const rekapJurusan = useMemo(() => {
 
-    const jurusanMap = new Map();
-
     const jurusanList = [
       "Teknik Komputer dan Jaringan",
       "Akuntansi",
@@ -259,89 +257,141 @@ export default function Home() {
       "Teknik Mesin"
     ];
 
-    jurusanList.forEach((jurusan) => {
-      jurusanMap.set(jurusan, {
-        nama: jurusan,
-        pilihan1: {
-          laki: 0,
-          perempuan: 0,
-          total: 0,
+    const jurusanMap = new Map(
+      jurusanList.map((jurusan) => [
+        jurusan,
+        {
+          nama: jurusan,
+          pilihan1: {
+            laki: 0,
+            perempuan: 0,
+            total: 0,
+          },
+          pilihan2: {
+            laki: 0,
+            perempuan: 0,
+            total: 0,
+          },
+          kuota: KUOTA_JURUSAN,
+          pendaftar1: [],
+          pendaftar2: [],
+          accepted1: [],
+          accepted2: [],
         },
-        pilihan2: {
-          laki: 0,
-          perempuan: 0,
-          total: 0,
-        },
-        kuota: KUOTA_JURUSAN,
-      });
-    });
+      ])
+    );
 
-    data.forEach((item) => {
-      // Pilihan 1
-      const jurusanKey = Object.keys(item).find(
+    const getNumber = (value: any) => {
+      if (typeof value === "number") return value;
+      const raw = String(value || "").replace(/,/g, ".").replace(/[^0-9.\-]/g, "");
+      const num = Number(raw);
+      return Number.isFinite(num) ? num : NaN;
+    };
+
+    const detectField = (keys: string[], pattern: RegExp) => {
+      return keys.find((key) => pattern.test(key.toLowerCase())) || "";
+    };
+
+    const headers = data[0] ? Object.keys(data[0]) : [];
+    const raporKey = detectField(headers, /rapor|nilai\s*rapor/i);
+    const genericTestKey = detectField(headers, /tes|nilai\s*tes|ujian/i);
+
+    const normalize = (value: string) => String(value || "").trim();
+
+    const parseApplicant = (item: any) => {
+      const name = normalize(item["Nama Lengkap"] || item["nama"] || item["Name"] || "");
+      const jurusan1Key = Object.keys(item).find(
         (k) => k.toLowerCase().includes("jurusan") && !k.toLowerCase().includes("kedua")
       );
+      const jurusan2Key = Object.keys(item).find((k) => k.toLowerCase().includes("kedua"));
+      const choice1 = jurusan1Key ? normalize(item[jurusan1Key]) : "";
+      const choice2 = jurusan2Key ? normalize(item[jurusan2Key]) : "";
 
-      const namaJurusan1 = jurusanKey
-        ? String(item[jurusanKey] ?? "").trim()
-        : "";
-
-      if (namaJurusan1 && jurusanMap.has(namaJurusan1)) {
-        const jkKey = Object.keys(item).find(
-          (k) =>
-            k.toLowerCase().includes("kelamin") ||
-            k.toLowerCase() === "jk"
-        );
-
-        const jk = jkKey
-          ? String(item[jkKey]).toLowerCase()
-          : "";
-
-        const jurusan1: any = jurusanMap.get(namaJurusan1);
-
-        if (jk === "l" || jk.includes("laki")) {
-          jurusan1.pilihan1.laki += 1;
-        }
-
-        if (jk === "p" || jk.includes("perempuan")) {
-          jurusan1.pilihan1.perempuan += 1;
-        }
-
-        jurusan1.pilihan1.total += 1;
-      }
-
-      // Pilihan 2
-      const pilihanKeduaKey = Object.keys(item).find(
-        (k) => k.toLowerCase().includes("kedua")
+      const jkKey = Object.keys(item).find(
+        (k) =>
+          k.toLowerCase().includes("kelamin") ||
+          k.toLowerCase() === "jk"
       );
+      const jk = jkKey ? String(item[jkKey]).toLowerCase() : "";
 
-      const namaJurusan2 = pilihanKeduaKey
-        ? String(item[pilihanKeduaKey] ?? "").trim()
-        : "";
+      const rapor = raporKey ? getNumber(item[raporKey]) : NaN;
+      let test = genericTestKey ? getNumber(item[genericTestKey]) : NaN;
 
-      if (namaJurusan2 && jurusanMap.has(namaJurusan2)) {
-        const jkKey = Object.keys(item).find(
-          (k) =>
-            k.toLowerCase().includes("kelamin") ||
-            k.toLowerCase() === "jk"
-        );
-
-        const jk = jkKey
-          ? String(item[jkKey]).toLowerCase()
-          : "";
-
-        const jurusan2: any = jurusanMap.get(namaJurusan2);
-
-        if (jk === "l" || jk.includes("laki")) {
-          jurusan2.pilihan2.laki += 1;
+      if (!Number.isFinite(test) && choice1) {
+        const testFieldForJurusan = Object.keys(item).find((k) => {
+          const lower = k.toLowerCase();
+          return /tes|uji|nilai/.test(lower) && lower.includes(choice1.toLowerCase().split(" ")[0]);
+        });
+        if (testFieldForJurusan) {
+          test = getNumber(item[testFieldForJurusan]);
         }
-
-        if (jk === "p" || jk.includes("perempuan")) {
-          jurusan2.pilihan2.perempuan += 1;
-        }
-
-        jurusan2.pilihan2.total += 1;
       }
+
+      const score = Number.isFinite(rapor) && Number.isFinite(test)
+        ? rapor * 0.3 + test * 0.7
+        : NaN;
+
+      return {
+        name,
+        choice1,
+        choice2,
+        rapor,
+        test,
+        score,
+        jk,
+      };
+    };
+
+    const applicants = data.map(parseApplicant);
+
+    applicants.forEach((applicant) => {
+      if (jurusanMap.has(applicant.choice1)) {
+        const jurusan = jurusanMap.get(applicant.choice1) as any;
+        if (jurusan) {
+          const isMale = applicant.jk === "l" || applicant.jk.includes("laki");
+          const isFemale = applicant.jk === "p" || applicant.jk.includes("perempuan");
+
+          if (isMale) jurusan.pilihan1.laki += 1;
+          if (isFemale) jurusan.pilihan1.perempuan += 1;
+          jurusan.pilihan1.total += 1;
+          jurusan.pendaftar1.push(applicant);
+        }
+      }
+
+      if (jurusanMap.has(applicant.choice2)) {
+        const jurusan = jurusanMap.get(applicant.choice2) as any;
+        if (jurusan) {
+          const isMale = applicant.jk === "l" || applicant.jk.includes("laki");
+          const isFemale = applicant.jk === "p" || applicant.jk.includes("perempuan");
+
+          if (isMale) jurusan.pilihan2.laki += 1;
+          if (isFemale) jurusan.pilihan2.perempuan += 1;
+          jurusan.pilihan2.total += 1;
+          jurusan.pendaftar2.push(applicant);
+        }
+      }
+    });
+
+    const compareApplicants = (a: any, b: any) => {
+      const aHasScore = Number.isFinite(a.score);
+      const bHasScore = Number.isFinite(b.score);
+      if (aHasScore && bHasScore) return b.score - a.score;
+      if (aHasScore) return -1;
+      if (bHasScore) return 1;
+      return a.name.localeCompare(b.name);
+    };
+
+    jurusanMap.forEach((jurusan: any) => {
+      const sortedFirst = jurusan.pendaftar1.slice().sort(compareApplicants);
+      jurusan.accepted1 = sortedFirst.slice(0, jurusan.kuota);
+
+      const acceptedFirstNames = new Set(jurusan.accepted1.map((item: any) => item.name));
+      const remainingQuota = Math.max(0, jurusan.kuota - jurusan.accepted1.length);
+      const sortedSecond = jurusan.pendaftar2
+        .filter((item: any) => !acceptedFirstNames.has(item.name))
+        .sort(compareApplicants);
+
+      jurusan.accepted2 = sortedSecond.slice(0, remainingQuota);
     });
 
     return Array.from(jurusanMap.values()).map((item: any) => ({
@@ -350,6 +400,11 @@ export default function Home() {
       persentase1: ((item.pilihan1.total / item.kuota) * 100).toFixed(2),
       selisih2: item.pilihan2.total - item.kuota,
       persentase2: ((item.pilihan2.total / item.kuota) * 100).toFixed(2),
+      selectedNames1: item.accepted1.map((app: any) => app.name),
+      selectedNames2: item.accepted2.map((app: any) => app.name),
+      hasScoreData: Boolean(raporKey && genericTestKey),
+      raporKey,
+      testKey: genericTestKey,
     }));
 
   }, [data]);
@@ -1254,6 +1309,57 @@ export default function Home() {
 
               </div>
 
+            </div>
+
+            <div className="bg-white rounded-[28px] border border-slate-200 shadow-xl overflow-hidden">
+              <div className="px-6 py-5 border-b border-slate-200 bg-slate-50">
+                <h3 className="text-2xl font-bold text-slate-800">
+                  🧾 Nama Peserta Lolos Jurusan
+                </h3>
+                <p className="text-sm text-slate-600 mt-1">
+                  Urutan seleksi menggunakan bobot 30% nilai rapor dan 70% nilai tes ketika data tersedia.
+                </p>
+              </div>
+
+              <div className="p-6 space-y-5">
+                {rekapJurusan.map((item: any, index) => (
+                  <div key={index} className="rounded-3xl border border-slate-200 p-4 bg-slate-50">
+                    <div className="flex items-center justify-between gap-3 mb-3">
+                      <div>
+                        <div className="text-base font-semibold text-slate-800">{item.nama}</div>
+                        <div className="text-xs text-slate-500">
+                          Kuota: {item.kuota} • Pendaftar pilihan 1: {item.pilihan1.total} • pilihan 2: {item.pilihan2.total}
+                        </div>
+                      </div>
+                      {!item.hasScoreData && (
+                        <span className="inline-flex rounded-full bg-amber-100 text-amber-800 px-3 py-1 text-xs font-semibold">
+                          Nilai belum tersedia
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="grid gap-3 md:grid-cols-2">
+                      <div>
+                        <div className="text-sm font-semibold text-slate-700">Pilihan Pertama</div>
+                        <div className="mt-2 text-sm text-slate-600">
+                          {item.selectedNames1.length > 0
+                            ? item.selectedNames1.join(", ")
+                            : "Tidak ada peserta terpilih di pilihan pertama."}
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="text-sm font-semibold text-slate-700">Pilihan Kedua</div>
+                        <div className="mt-2 text-sm text-slate-600">
+                          {item.selectedNames2.length > 0
+                            ? item.selectedNames2.join(", ")
+                            : "Tidak ada peserta terpilih di pilihan kedua."}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
           </div>
