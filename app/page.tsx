@@ -10,6 +10,7 @@ export default function Home() {
 
   const [menu, setMenu] = useState("dashboard");
 
+  const [unlockDashboard, setUnlockDashboard] = useState(false);
   const [unlockSekolah, setUnlockSekolah] = useState(false);
   const [unlockAdmin, setUnlockAdmin] = useState(false);
   const [unlockJurusan, setUnlockJurusan] = useState(false);
@@ -903,6 +904,19 @@ export default function Home() {
   // LOCK MENU
   // =========================
 
+  const handleOpenDashboard = () => {
+
+    if (unlockDashboard) {
+      setMenu("dashboard");
+      return;
+    }
+
+    setPasswordTarget("dashboard");
+    setPasswordInput("");
+    setShowPasswordModal(true);
+
+  };
+
   const handleOpenSekolah = () => {
 
     if (unlockSekolah) {
@@ -943,7 +957,11 @@ export default function Home() {
   };
 
   const handlePasswordSubmit = () => {
-    if (passwordTarget === "sekolah" && passwordInput === "20607872") {
+    if (passwordTarget === "dashboard" && passwordInput === "999666") {
+      setUnlockDashboard(true);
+      setMenu("dashboard");
+      setShowPasswordModal(false);
+    } else if (passwordTarget === "sekolah" && passwordInput === "20607872") {
       setUnlockSekolah(true);
       setMenu("sekolah");
       setShowPasswordModal(false);
@@ -987,14 +1005,14 @@ export default function Home() {
         <div className="flex gap-3 mb-8 overflow-auto">
 
           <button
-            onClick={() => setMenu("dashboard")}
+            onClick={handleOpenDashboard}
             className={`px-5 py-3 rounded-2xl text-sm font-semibold transition-all ${
               menu === "dashboard"
                 ? "bg-blue-600 text-white"
                 : "bg-white text-slate-700 border border-slate-200"
             }`}
           >
-            Dashboard
+            🔒 Dashboard
           </button>
 
           <button
