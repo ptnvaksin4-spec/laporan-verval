@@ -252,10 +252,10 @@ export default function Home() {
   const rekapJurusan = useMemo(() => {
 
     const jurusanList = [
-      "Teknik Komputer dan Jaringan",
-      "Akuntansi",
+      "Akuntansi dan Keuangan Lembaga",
       "Bisnis Digital",
-      "Teknik Mesin"
+      "Teknik Mesin",
+      "Teknik Jaringan Komputer dan Telekomunikasi"
     ];
 
     const jurusanMap = new Map(
@@ -1343,102 +1343,6 @@ export default function Home() {
 
               </div>
 
-            </div>
-
-            <div className="bg-white rounded-[28px] border border-slate-200 shadow-xl overflow-hidden">
-              <div className="px-6 py-5 border-b border-slate-200 bg-slate-50">
-                <h3 className="text-2xl font-bold text-slate-800">
-                  🧾 Nama Peserta Lolos Jurusan
-                </h3>
-                <p className="text-sm text-slate-600 mt-1">
-                  Urutan seleksi menggunakan bobot 30% nilai rapor dan 70% nilai tes.
-                </p>
-              </div>
-
-              <div className="p-6 space-y-5">
-                {rekapJurusan.map((item: any, index) => (
-                  <div key={index} className="rounded-3xl border border-slate-200 p-4 bg-slate-50">
-                    <div className="flex flex-col gap-3 mb-4 md:flex-row md:items-center md:justify-between">
-                      <div>
-                        <div className="text-base font-semibold text-slate-800">{item.nama}</div>
-                        <div className="text-xs text-slate-500 mt-1">
-                          Kuota: {item.kuota} • Pendaftar pilihan 1: {item.pilihan1.total} • pilihan 2: {item.pilihan2.total}
-                        </div>
-                      </div>
-                      <div className="flex flex-wrap gap-2 text-xs text-slate-600">
-                        <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 font-semibold">Pilihan 1: {item.pilihan1.total}</span>
-                        <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 font-semibold">Pilihan 2: {item.pilihan2.total}</span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div>
-                        <div className="mb-2 text-sm font-semibold text-slate-700">Pilihan Pertama</div>
-                        {item.accepted1.length > 0 ? (
-                          <div className="overflow-x-auto rounded-3xl border border-slate-200 bg-white">
-                            <table className="w-full min-w-[520px] text-sm text-left text-slate-700">
-                              <thead className="bg-slate-100 text-slate-600">
-                                <tr>
-                                  <th className="px-4 py-3">Nama</th>
-                                  <th className="px-4 py-3">Nilai Rapor</th>
-                                  <th className="px-4 py-3">Nilai Tes</th>
-                                  <th className="px-4 py-3">Hasil Akhir</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {item.accepted1.map((app: any, appIndex: number) => (
-                                  <tr key={appIndex} className={appIndex % 2 === 0 ? "bg-slate-50" : "bg-white"}>
-                                    <td className="px-4 py-3">{app.name}</td>
-                                    <td className="px-4 py-3 font-semibold">{app.rapor.toFixed(0)}</td>
-                                    <td className="px-4 py-3 font-semibold">{app.test.toFixed(0)}</td>
-                                    <td className="px-4 py-3 font-semibold text-blue-600">{app.score.toFixed(1)}</td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        ) : (
-                          <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-500">
-                            Tidak ada peserta terpilih di pilihan pertama.
-                          </div>
-                        )}
-                      </div>
-
-                      <div>
-                        <div className="mb-2 text-sm font-semibold text-slate-700">Pilihan Kedua</div>
-                        {item.accepted2.length > 0 ? (
-                          <div className="overflow-x-auto rounded-3xl border border-slate-200 bg-white">
-                            <table className="w-full min-w-[520px] text-sm text-left text-slate-700">
-                              <thead className="bg-slate-100 text-slate-600">
-                                <tr>
-                                  <th className="px-4 py-3">Nama</th>
-                                  <th className="px-4 py-3">Nilai Rapor</th>
-                                  <th className="px-4 py-3">Nilai Tes</th>
-                                  <th className="px-4 py-3">Hasil Akhir</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {item.accepted2.map((app: any, appIndex: number) => (
-                                  <tr key={appIndex} className={appIndex % 2 === 0 ? "bg-slate-50" : "bg-white"}>
-                                    <td className="px-4 py-3">{app.name}</td>
-                                    <td className="px-4 py-3 font-semibold">{app.rapor.toFixed(0)}</td>
-                                    <td className="px-4 py-3 font-semibold">{app.test.toFixed(0)}</td>
-                                    <td className="px-4 py-3 font-semibold text-purple-600">{app.score.toFixed(1)}</td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        ) : (
-                          <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-500">
-                            Tidak ada peserta terpilih di pilihan kedua.
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
 
           </div>
