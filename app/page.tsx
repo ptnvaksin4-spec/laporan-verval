@@ -418,14 +418,15 @@ export default function Home() {
         total: acceptedSecond.length
       };
       jurusan.pilihan2Actual = pilihan2Actual;
+      jurusan.kuota2 = remainingQuota; // Kuota untuk pilihan 2 adalah sisa dari pilihan 1
     });
 
     return Array.from(jurusanMap.values()).map((item: any) => ({
       ...item,
       selisih1: item.pilihan1.total - item.kuota,
       persentase1: ((item.pilihan1.total / item.kuota) * 100).toFixed(2),
-      selisih2: item.pilihan2Actual.total - item.kuota,
-      persentase2: ((item.pilihan2Actual.total / item.kuota) * 100).toFixed(2),
+      selisih2: item.pilihan2Actual.total - item.kuota2,
+      persentase2: ((item.pilihan2Actual.total / item.kuota2) * 100).toFixed(2),
       accepted1: item.accepted1,
       accepted2: item.accepted2,
       hasScoreData: true,
@@ -566,7 +567,7 @@ export default function Home() {
       doc.text(String(item.pilihan2Actual.laki), cols[1] + 4, y + 3);
       doc.text(String(item.pilihan2Actual.perempuan), cols[2] + 4, y + 3);
       doc.text(String(item.pilihan2Actual.total), cols[3] + 4, y + 3);
-      doc.text(String(item.kuota), cols[4] + 4, y + 3);
+      doc.text(String(item.kuota2), cols[4] + 4, y + 3);
       doc.setTextColor(item.selisih2 > 0 ? 255 : 0, item.selisih2 > 0 ? 0 : 128, 0);
       doc.text(
         String(item.selisih2),
@@ -619,7 +620,7 @@ export default function Home() {
       "Laki-laki": item.pilihan2Actual.laki,
       Perempuan: item.pilihan2Actual.perempuan,
       Total: item.pilihan2Actual.total,
-      Kuota: item.kuota,
+      Kuota: item.kuota2,
       Selisih: item.selisih2,
       "Persentase (%)": item.persentase2,
     }));
@@ -1332,7 +1333,7 @@ export default function Home() {
 
                         <td className="px-6 py-4 text-center font-bold text-purple-600">{item.pilihan2Actual.total}</td>
 
-                        <td className="px-6 py-4 text-center font-semibold">{item.kuota}</td>
+                        <td className="px-6 py-4 text-center font-semibold">{item.kuota2}</td>
 
                         <td className={`px-6 py-4 text-center font-bold ${
                           item.selisih2 > 0 ? 'text-red-600' : 'text-green-600'
