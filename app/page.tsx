@@ -409,14 +409,23 @@ export default function Home() {
         .sort(compareApplicants);
 
       jurusan.accepted2 = sortedSecond.slice(0, remainingQuota);
+      
+      // Calculate actual pilihan2 stats based on remaining quota
+      const acceptedSecond = jurusan.accepted2;
+      const pilihan2Actual = {
+        laki: acceptedSecond.filter((a: any) => a.jk === "l" || a.jk.includes("laki")).length,
+        perempuan: acceptedSecond.filter((a: any) => a.jk === "p" || a.jk.includes("perempuan")).length,
+        total: acceptedSecond.length
+      };
+      jurusan.pilihan2Actual = pilihan2Actual;
     });
 
     return Array.from(jurusanMap.values()).map((item: any) => ({
       ...item,
       selisih1: item.pilihan1.total - item.kuota,
       persentase1: ((item.pilihan1.total / item.kuota) * 100).toFixed(2),
-      selisih2: item.pilihan2.total - item.kuota,
-      persentase2: ((item.pilihan2.total / item.kuota) * 100).toFixed(2),
+      selisih2: item.pilihan2Actual.total - item.kuota,
+      persentase2: ((item.pilihan2Actual.total / item.kuota) * 100).toFixed(2),
       accepted1: item.accepted1,
       accepted2: item.accepted2,
       hasScoreData: true,
@@ -554,9 +563,9 @@ export default function Home() {
       }
 
       doc.text(item.nama.substring(0, 20), cols[0] + 4, y + 3);
-      doc.text(String(item.pilihan2.laki), cols[1] + 4, y + 3);
-      doc.text(String(item.pilihan2.perempuan), cols[2] + 4, y + 3);
-      doc.text(String(item.pilihan2.total), cols[3] + 4, y + 3);
+      doc.text(String(item.pilihan2Actual.laki), cols[1] + 4, y + 3);
+      doc.text(String(item.pilihan2Actual.perempuan), cols[2] + 4, y + 3);
+      doc.text(String(item.pilihan2Actual.total), cols[3] + 4, y + 3);
       doc.text(String(item.kuota), cols[4] + 4, y + 3);
       doc.setTextColor(item.selisih2 > 0 ? 255 : 0, item.selisih2 > 0 ? 0 : 128, 0);
       doc.text(
@@ -567,9 +576,9 @@ export default function Home() {
       doc.setTextColor(30, 30, 30);
       doc.text(String(item.persentase2) + "%", cols[6] + 4, y + 3);
 
-      sumLaki2 += Number(item.pilihan2.laki) || 0;
-      sumPerempuan2 += Number(item.pilihan2.perempuan) || 0;
-      sumTotal2 += Number(item.pilihan2.total) || 0;
+      sumLaki2 += Number(item.pilihan2Actual.laki) || 0;
+      sumPerempuan2 += Number(item.pilihan2Actual.perempuan) || 0;
+      sumTotal2 += Number(item.pilihan2Actual.total) || 0;
 
       y += 14;
     });
@@ -607,9 +616,9 @@ export default function Home() {
     const data2 = rekapJurusan.map((item: any, idx: number) => ({
       No: idx + 1,
       "Nama Jurusan": item.nama,
-      "Laki-laki": item.pilihan2.laki,
-      Perempuan: item.pilihan2.perempuan,
-      Total: item.pilihan2.total,
+      "Laki-laki": item.pilihan2Actual.laki,
+      Perempuan: item.pilihan2Actual.perempuan,
+      Total: item.pilihan2Actual.total,
       Kuota: item.kuota,
       Selisih: item.selisih2,
       "Persentase (%)": item.persentase2,
@@ -1317,11 +1326,11 @@ export default function Home() {
 
                         <td className="px-6 py-4 font-semibold">{item.nama}</td>
 
-                        <td className="px-6 py-4 text-center">{item.pilihan2.laki}</td>
+                        <td className="px-6 py-4 text-center">{item.pilihan2Actual.laki}</td>
 
-                        <td className="px-6 py-4 text-center">{item.pilihan2.perempuan}</td>
+                        <td className="px-6 py-4 text-center">{item.pilihan2Actual.perempuan}</td>
 
-                        <td className="px-6 py-4 text-center font-bold text-purple-600">{item.pilihan2.total}</td>
+                        <td className="px-6 py-4 text-center font-bold text-purple-600">{item.pilihan2Actual.total}</td>
 
                         <td className="px-6 py-4 text-center font-semibold">{item.kuota}</td>
 
